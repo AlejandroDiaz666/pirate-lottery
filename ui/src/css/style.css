@@ -1,0 +1,520 @@
+body {
+    background-image: url("../images/pirate-sword-bkgrnd.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#bodySpacer {
+}
+
+/*
+ * modifiers to make blocks disappear and re-appear.
+ *  visibleB:  block
+ *  visibleIB: inline-block
+ *  visibleTC: table-cell (for vertical alignment)
+ */
+.visibleB, .statusDivShow, .metaMaskDivShow {
+    display: block;
+}
+.visibleIB {
+    display: inline-block;
+}
+.visibleTC {
+    display: table-cell;
+}
+.hidden, .statusDivHide, .metaMaskDivHide {
+    display: none;
+}
+#ethereumLogo {
+    position: absolute;
+    top: 35px;
+    left: 518px;
+    width: 192px;
+    height: 108px;
+}
+#TitleLeftSpan {
+    position: absolute;
+    top: 18px;
+    left: 300px;
+    width: fit-content;
+    height: 50px;
+    font-size: 50px;
+    transform: translateX(-50%);
+    color: antiquewhite;
+}
+#TitleRightSpan {
+    position: absolute;
+    top: -10px;
+    left: 60%;
+    transform: translateX(-50%);
+    width: 600px;
+    font-size: 30px;
+    font-family: lato;
+    color: antiquewhite;
+}
+@media (max-width: 1688px) {
+    #TitleRightSpan {
+	position: absolute;
+	top: -10px;
+	left: 1015px;
+	width: 600px;
+	font-size: 30px;
+	font-family: lato;
+	color: antiquewhite;
+    }
+}
+
+#topSection {
+}
+#tabularArea {
+    position: absolute;
+    margin-top: 80px;
+    left: 300px;
+    width: fit-content;
+    transform: translateX(-50%);
+}
+#networkArea, #accountArea, #balanceArea, #lotteryABalanceArea, #lotteryBBalanceArea {
+    resize: none;
+}
+#lotteryABalanceDiv, #lotteryBBalanceDiv {
+    position: relative;
+    top: 0px;
+    left: 0px;
+}
+#withdrawAButton, #withdrawBButton {
+    vertical-align: top;
+}
+#withdrawAButton:hover, #withdrawBButton:hover {
+    cursor: pointer;
+}
+#withdrawAButton[disabled]:hover, #withdrawBButton[disabled]:hover {
+    cursor: default;
+}
+
+
+/* message telling the user that we are waiting for metamask */
+#metaMaskDiv {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 55%;
+    top: 15%;
+    width: 300px;
+    height: 50px;
+    padding: 10px;
+    overflow: none;
+    border: 1px solid #888;
+    background-color: #60ff60;
+}
+/* area for status of metamask transactions */
+#statusDiv {
+    position: absolute;
+    top: 100%;
+    left: 0px;
+    transform: translateY(-120%);
+    background-color: #60ff60;
+    padding: 15px;
+    margin: 12px;
+    width: 95%;
+}
+#youWinModal {
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    top: 30%;
+    width: 500px;
+    height: 300px;
+    transform: translate3d(-50%, -50%, 0px);
+    padding: 20px;
+    overflow: none;
+    border: 1px solid #888;
+    background-image: url("../images/youwin-colors.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 457px 189px;
+    background-color: #ffffff;
+    font-size: 18px;
+    font-family: lato;
+    text-align: center;
+}
+#youWinModalOKButton {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate3d(-50%, -38px, 0px);
+    width: 60px;
+    height: 30px;
+    font-size: 18px;
+    text-align: center;
+}
+#youWinModalOKButton:hover {
+    cursor: pointer;
+}
+#youWinMsgTop {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 480px;
+    transform: translateX(-50%);
+    font-size: 20px;
+}
+#youWinMsgBot {
+    position: absolute;
+    top: 236px;
+    left: 50%;
+    width: 420px;
+    transform: translateX(-50%);
+}
+#howTile {
+    position: absolute;
+    top: 30px;
+    left: 100%;
+    transform: translateX(-175px);
+    background-color: rgba(240, 240, 240, 0.4);
+    width: 160px;
+    height: 135px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 10px;
+}
+#howTile:hover {
+    cursor: pointer;
+}
+#howImg {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-58px);
+}
+#howTile p {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate3d(-50%, -200%, 0px);
+    font-size: 16px;
+    font-family: lato;
+    width: 100%;
+    text-align: center;
+}
+#howModal {
+    position: fixed;
+    width: 60%;
+    height: 60%;
+    top: 50%;
+    left: 50%;
+    padding: 20px;
+    transform: translate3d(-50%, -50%, 0px);
+    background-color: whitesmoke;
+    z-index: 2;
+    font-size: 20px;
+    font-family: lato;
+    overflow-y: scroll;
+}
+.closeX {
+    float: right;
+    font-size: 25px;
+    font-family: lato;
+    font-weight: bold;
+    height: 30px;
+    width: 30px;
+    background-color: white;
+    text-align: center;
+    position: relative;
+    top: -10px;
+}
+.closeX:hover {
+    cursor: pointer;
+}
+#lotteryA, #lotteryB {
+    position: absolute;
+    top: 30%;
+    width: 530px;
+    transform: translateX(-50%);
+}
+#lotteryA {
+   left: 25%;
+}
+#lotteryB {
+    left: 75%;
+}
+
+#AopnRoundInfo, #AclsRoundInfo,
+#BopnRoundInfo, #BclsRoundInfo {
+    background-color: rgba(250, 235, 215, 0.4);
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 370px;
+    height: 520px;
+    border-radius: 10px;
+}
+
+.opnCurRoundAnnounce, .clsCurRoundAnnounce,
+.clsPrvRoundAnnounce, .opnPrvRoundAnnounce {
+    position: absolute;
+    top: 10px;
+    left: 115px;
+    font-size: 24px;
+    font-family: lato;
+    text-align: center;
+    transform: translateX(-50%);
+}
+.opnCurImg, .clsCurImg {
+    position: absolute;
+    top: 85px;
+    left: 50%;
+    width: 120px;
+    height: 40px;
+    transform: translateX(-50%);
+}
+.opnPrvWinningTicket, .clsPrvWinningTicket {
+    position: absolute;
+    top: 70px;
+    left: 0%;
+    height: 60px;
+    width: 100%;
+}
+.opnPrvWinningTicketPrompt, .clsPrvWinningTicketPrompt {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translate3d(0px, -50%, 0px);
+}
+.opnPrvWinningTicketImg, .clsPrvWinningTicketImg {
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 60px;
+    background-image: url("../images/ticket-blank.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+#AopnPrvWinningTicketNo, #AclsPrvWinningTicketNo,
+#BopnPrvWinningTicketNo, #BclsPrvWinningTicketNo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0px);
+}
+#AclsPrvClaimWinButton,
+#BclsPrvClaimWinButton {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate3d(-115%, -50%, 0px);
+}
+#AclsPrvClaimWinButton:hover,
+#BclsPrvClaimWinButton:hover {
+    cursor: pointer;
+}
+
+/*
+ * the duration section is where we display
+ *  - time remaining to participate in the current open round
+ *  - tickets remainingg in the current open round
+ *  - time remaining to claim the previous round's prize
+ *
+ */
+.opnCurDurationDiv, .clsPrvDurationDiv {
+    position: absolute;
+    top: 0px;
+    left: 270px;
+    width: 40px;
+    height: 80px;
+}
+#AopnCurMaxDuration, #AclsPrvClaimDeadline,
+#BopnCurMaxDuration, #BclsPrvClaimDeadline {
+    position: absolute;
+    top: 13px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+}
+.opnCurMaxDurationPrompt, .clsPrvClaimDeadlinePrompt {
+    position: absolute;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    font-family: lato;
+}
+#AopnCurTicketsRemain,
+#BopnCurTicketsRemain {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+}
+.opnCurTicketsRemainPrompt {
+    position: absolute;
+    top: 59px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    font-family: lato;
+}
+
+
+/*
+ * the stats section is where we display
+ *  - current/max number of tickets sold
+ *  - current/max size of the pot
+ */
+.opnCurStats, .opnPrvStats,
+.clsCurStats, .clsPrvStats {
+    display: table;
+    background-color: inherit;
+    position: absolute;
+    left: 50%;
+    width: 350px;
+    font-size: 14px;
+    transform: translateX(-50%);
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    padding: 3px;
+}
+.opnCurStats, .clsCurStats {
+    top: 140px;
+}
+.opnPrvStats, .clsPrvStats {
+    top: 140px;
+}
+.statRow {
+    display: table-row;
+}
+.statCol {
+    display: table-cell;
+}
+.opnCurMaxPrompt, .opnCurCurPrompt, .opnPrvPrompt,
+.clsCurPrompt, .clsPrvPrompt {
+}
+
+#AopnCurPrizeSoFar, #AopnCurMaxPrize, #AopnPrvPrize, #AclsCurPrize, #AclsPrvPrize,
+#BopnCurPrizeSoFar, #BopnCurMaxPrize, #BopnPrvPrize, #BclsCurPrize, #BclsPrvPrize {
+    font-size: 18px;
+    font-weight: bold;
+    font-family: monospace;
+}
+#AopnCurTicketsSoFar, #AopnCurMaxTickets, #AopnPrvTickets, #AclsCurTickets, #AclsPrvTickets,
+#BopnCurTicketsSoFar, #BopnCurMaxTickets, #BopnPrvTickets, #BclsCurTickets, #BclsPrvTickets {
+    font-size: 13px;
+    font-family: monospace;
+}
+
+.opnCurTicketPricePrompt {
+    position: absolute;
+    top: 210px;
+    left: 20px;
+    font-size: 14px;
+    font-family: lato;
+}
+#AopnCurTicketPrice,
+#BopnCurTicketPrice {
+    margin-left: 10px;
+}
+.opnPrvClaimMsg, .clsCurWinnerMsg, .clsPrvDeadlineMsg {
+    position: absolute;
+    top: 185px;
+    border-style: double;
+    padding: 5px;
+    margin: 5px;
+    text-align: center;
+}
+#AopnPrvRoundInfo, #AclsPrvRoundInfo,
+#BopnPrvRoundInfo, #BclsPrvRoundInfo {
+    background-color: rgba(128, 128, 128, 0.5);
+    position: absolute;
+    top: 100%;
+    left: 0px;
+    width: 100%;
+    height: 260px;
+    transform: translateY(-100%);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+#AopnCurPurchaseButton,
+#BopnCurPurchaseButton {
+    position: absolute;
+    top: 230px;
+    left: 33px;
+}
+#AopnCurPurchaseButton:hover,
+#BopnCurPurchaseButton:hover {
+    cursor: pointer;
+}
+
+/*
+ *
+ * the your-tickets sections contain a programatically-built list of tickets
+ *
+ */
+#AopnCurYourTickets, #AclsCurYourTickets, #AopnPrvYourTickets, #AclsPrvYourTickets,
+#BopnCurYourTickets, #BclsCurYourTickets, #BopnPrvYourTickets, #BclsPrvYourTickets {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 260px;
+    width: 158px;
+    border-radius: 10px;
+    overflow: auto;
+}
+#AopnCurYourTickets, #AclsCurYourTickets,
+#BopnCurYourTickets, #BclsCurYourTickets {
+    background-color: rgba(250, 235, 215, 0.4);
+    transform: translate3d(372px, 0px, 0px);
+}
+#AclsPrvYourTickets, #AopnPrvYourTickets,
+#BclsPrvYourTickets, #BopnPrvYourTickets {
+    background-color: rgba(128, 128, 128, 0.5);
+    transform: translate3d(372px, 260px, 0px);
+}
+
+.opnCurYourTicketsTitle, .clsCurYourTicketsTitle,
+.opnPrvYourTicketsTitle, .clsPrvYourTicketsTitle {
+    font-size: 16px;
+    margin: 4px;
+    text-align: center;
+    border-bottom: azure;
+    border-bottom-width: 1px;
+    border-bottom-color: black;
+    border-bottom-style: solid;
+}
+#AopnCurYourTicketsList, #AopnPrvYourTicketsList, #AclsCurYourTicketsList, #AclsPrvYourTicketsList,
+#BopnCurYourTicketsList, #BopnPrvYourTicketsList, #BclsCurYourTicketsList, #BclsPrvYourTicketsList {
+    display: table;
+}
+.yourTicketsListDiv0 {
+    display: table-row;
+    background-color: inherit;
+    font-weight: normal;
+}
+.yourTicketsListDiv1 {
+    display: table-cell;
+    font-weight: normal;
+    padding: 2px;
+    background-color: inherit;
+    background-image: url("../images/ticket-blank-long.png");
+    background-repeat: no-repeat;
+    background-size: 125px 30px;
+    position: relative;
+    left: 14px;
+    width: 125px;
+    height: 33px;
+}
+.yourTicketsListArea {
+    resize: none;
+    background-color: inherit;
+    font-weight: inherit;
+    text-align: center;
+    border: none;
+    width: 5em;
+    position: relative;
+    top: 5px;
+    left: 25px;
+}

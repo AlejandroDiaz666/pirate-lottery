@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pirate Lottery</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <link rel="stylesheet" type="text/css" id="themedStyle" href="css/default-style_TIMESTAMP__.css">
+    <!--
+    <link rel="stylesheet" type="text/css" href="css/intro_TIMESTAMP__.css">
+    -->
+    <link href="https://fonts.googleapis.com/css?family=Lato:300|Roboto:300i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,100italic,300,300italic,italic,700,700italic,900,900italic,400" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="bundle/index_TIMESTAMP_1546159211_.js"></script>
+    <!--
+    <script type="text/javascript" src="bundle/SVGAnimation.js" gwd-groups-version="1.0"></script>
+    -->
+  </head>
+
+  <body>
+
+    <div id="metaMaskDiv">
+      <p>
+	Waiting for MetaMask signature...
+      </p>
+    </div>
+
+    <div id="howTile">
+      <img id="howImg" src="images/how-skull.png">
+      <p>How does this work?</p>
+    </div>
+    <div id="howModal" class="hidden">
+      <span id="howClose" class="closeX">X</span>
+      <p>
+	Welcome to the Pirate Lottery!
+      </p>
+      <p>
+	Pirate Lottery is a decentralized lottery that runs completely on the Ethereum blockchain. The
+	entire operation of the lottery is controlled by an Ethereum smart contract - with no backend
+	server whatsoever. The user interface for the Pirate Lottery runs completely within your browser.
+	The user interface is hosted via IPFS (the InterPlanetary File System). This means that no
+	person can modify the way that the lottery works, and now that it is published, it cannot be
+	changed.
+      </p>
+      <p>
+	The source code for the Pirate Lottery is published on GitHub, and the actual Ethereum smart
+	contract can be examined on etherscan.io.
+      </p>
+      <p>
+	<u>The Prize</u></br>
+	The total proceeds of all the ticket sales from each round of a lottery is awarded to the winner
+	of that round, minus a two percent fee that goes to the creator of the game. Compare this to the
+	40% or more that is normally taken from government-run lotteries!
+      </p>
+      <p>
+	<u>How the Lottery Works:</u></br>
+	There are two lotteries: "Pirate's Booty" and "Buried Treasure". Generally tickets for the
+	"Pirate's Booty" lottery are cheaper than tickets for the "Buried Treasure" lottery, but otherwise
+	the two lotteries function in the same manner.
+      </p>
+      <p>
+	During each round of a lottery people can purchase tickets for the posted ticket price, as long as
+	the round is open. Once the maximum number of tickets have been purchased the round is closed. If
+	the round has been open longer than its maximum duration (5 days), then regardless of the number
+	of tickets sold, the next ticket purchased closes the round.
+      </p>
+      <p>
+	<i>After</i> a lottery round is closed the winner of the <i>previous</i> round can claim their
+	prize. The winner of the previous round will get a notification like this:
+      </p>
+      <img src="images/you-win-screen.png" style="width: 30%; position: relative; left: 50%; transform: translateX(-50%);"/>
+      <p>
+	And can claim their prize by clicking on the claim prize button, which will look like this:
+      </p>
+      <img src="images/claim-prize.png" style="width: 40%; position: relative; left: 50%; transform: translateX(-50%);"/>
+      <p>
+	<i>After</i> the prize of the <i>previous</i> round is claimed, the winner of the <i>current</i>
+	round is selected (read below for technical details regarding how the winner is selected fairly).
+	And once the winner is selected, the next round of the lottery is opened. The duration timer starts
+	when the first ticket of the new round is purchased.
+      </p>
+      <p>
+	<u>Price Adjustments:</u></br>
+	Before each new round begins both the ticket price, and the maximum number of tickets available
+	are determined, based on how long it took to complete the previous round. If it took a long time then
+	the ticket price is adjusted downwards (within bounds), and the maximum number of tickets is likewise
+	adjusted downwards. Similarly if the previous round sold out very quickly, the ticket price is adjusted
+	upwards, and the maximum number of tickets is increased.
+      </p>
+      <p>
+	<u>Abandoned Prizes</u></br>
+	If the winner of a round does not claim his prize within five days after the closing of the round, then
+	the prize is considered &quot;abandoned.&quot; An abandoned prize can be claimed by anyone who participated
+	in the round. When an abandoned prize is claimed, it only pays 50% of the lottery proceeds. If it's possible
+	to claim an abandoned prize then a notification will appear, as shown below:
+      </p>
+      <img src="images/claim-abandoned.png" style="width: 40%; position: relative; left: 50%; transform: translateX(-50%);"/>
+      <p>
+	<u>Technical Challenges:</u></br>
+	One of the challenges in creating a lottery program that runs on the Ethereum blockchain is that
+	Ethereum has no native random-number-generator. The basic reason for this is that no matter what
+	algorithm is used to generate a random number, the algorithm can be run before the next Ethereum
+	block is mined, and thus the number can be known ahead-of-time.
+      </p>
+      <p>
+	Other games-of-chance that run on the Ethereum blockchain either use an outside source for random
+	numbers (an oracle), or they use something that could actually be known to a hacker ahead-of-time
+	(such as the block hash of the previously mined block).
+      </p>
+      <p>
+	In order to get around the random number challenge, Pirate Lottery uses information that is completely
+	on-chain, but A) not known while a round is open and B) not change-able after a round is closed:
+      </p>
+      <p>
+	A hash, called the "player-hash" is created from the addresses of all the ticket
+	purchasers. the final input to the hash is the hash of the miner who mines the Ethereum block
+	that closes the round. Thus this hash cannot be known to any ticket purchaser while the round
+	is open. The final bit of data that goes into the selection of the winner of the round is that
+	in order to claim his prize, the winner of the <i>previous</i> round needs to sign a message
+	that contains the player-hash of the current (closed) round. This signature is used to select
+	a "random" winner of the current round.
+      </p>
+      <p>
+	Note that no player purchasing tickets for a given round has sufficient data to compute the the player-hash,
+	because the player-hash includes the address of the miner who mines the block that closes the round. Also
+	the miner who mines the block cannot know or meaningfully impact the selection of the winner of the current
+	round, because he does not know the signature of the winner of the previous round.
+      </p>
+      <p>
+	Anyone can examine the source code for the Pirate Lottery to verify that the winner-selection algorithm is
+	completely fair, and cannot be manipulated by any party!
+      </p>
+      <p>
+	<h2>Good Luck!</h2>
+      </p>
+    </div>
+
+    <div id="youWinModal" class="hidden">
+      <p id="youWinMsgTop"></p>
+      <p id="youWinMsgBot"></p>
+      <button id="youWinModalOKButton" type="button">Got it</button>
+    </div>
+
+    <div id="topSection">
+      <span id="TitleLeftSpan">
+	Pirate Lottery
+      </span>
+      <img id="ethereumLogo" src="images/Powered-by-Ethereum-logo.jpg"/>
+      <span id="TitleRightSpan">
+	<ul>
+	  <li>Completely Decentralized</li>
+	  <li>Completely Autonomous</li>
+	  <li>Open Source</li>
+	  <li>98% Payout</li>
+	</ul>
+      </span>
+      <div id="tabularArea">
+	<div id="networkAreaDiv">
+	  <textarea id="networkArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
+	</div>
+	<div id="accountDiv">
+	  <textarea id="accountArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
+	</div>
+	<div id="balanceAreaDiv">
+	  <textarea id="balanceArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
+	</div>
+	<div id="lotteryABalanceDiv">
+	  <textarea id="lotteryABalanceArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
+	  <button id="withdrawAButton" class="menuBarButton" type="button">Withdraw</button>
+	</div>
+	<div id="lotteryBBalanceDiv">
+	  <textarea id="lotteryBBalanceArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
+	  <button id="withdrawBButton" class="menuBarButton" type="button">Withdraw</button>
+	</div>
+      </div>
+    </div>
+
+
+    <!--
+	PIRATE'S BOOTY
+	current round open
+      -->
+    <div id="lotteryA">
+      <div id="AopnRoundInfo" class="hidden" style="clear:both">
+        <div class="opnCurRoundAnnounce">
+          <span>PIRATE'S BOOTY<br/>
+            round #<span id="AopnCurLotteryRoundNo"></span>
+          </span>
+        </div>
+        <img class="opnCurImg" src="images/open.png">
+        <div class="opnCurDurationDiv">
+          <div id="AopnCurMaxDuration"></div>
+          <div class="opnCurMaxDurationPrompt">maximum&nbsp;duration</div>
+          <div id="AopnCurTicketsRemain"></div>
+          <div class="opnCurTicketsRemainPrompt">tickets&nbsp;remain</div>
+        </div>
+        <div class="opnCurStats">
+          <div class="statRow">
+            <div class="opnCurMaxPrompt">MAX</div>
+            <div id="AopnCurMaxPrize" class="statCol"></div>
+            <div id="AopnCurMaxTickets" class="statCol"></div>
+          </div>
+          <div class="statRow">
+            <div class="opnCurCurPrompt" class="statCol">CURRENT</div>
+            <div id="AopnCurPrizeSoFar" class="statCol"></div>
+            <div id="AopnCurTicketsSoFar" class="statCol"></div>
+          </div>
+        </div>
+        <div class="opnCurTicketPricePrompt">Ticket price:<span id="AopnCurTicketPrice"></span></div>
+        <button id="AopnCurPurchaseButton" class="hidden" type="button">Purchase Ticket</button>
+        <div id="AopnCurExpiredDur" class="hidden">
+          <span>This round of the lottery has exceeded its nominal duration. Anyone can close this round at any time!</span>
+          <button class="opnCurCloseButton" type="button">Close Round</button>
+        </div>
+        <!--
+            PIRATE'S booty
+            previous round -- current round open
+          -->
+        <div id="AopnPrvRoundInfo">
+          <div class="opnPrvRoundAnnounce">
+            <span>PREVIOUS ROUND<br/>
+              round #<span id="AopnPrvRoundNo"></span>
+            </span>
+          </div>
+          <div class="opnPrvWinningTicket">
+            <span class="opnPrvWinningTicketPrompt">Winning ticket</span>
+            <div class="opnPrvWinningTicketImg"><span id="AopnPrvWinningTicketNo"></span></div>
+          </div>
+          <div class="opnPrvStats">
+            <div class="statRow">
+              <div class="opnPrvPrompt" class="statCol">FINAL</div>
+              <div id="AopnPrvPrize" class="statCol"></div>
+              <div id="AopnPrvTickets" class="statCol"></div>
+            </div>
+          </div>
+          <div class="opnPrvClaimMsg">Round <span id="AopnPrvClaimMsgPrvNo"></span> prize can only be claimed
+            after round <span id="AopnPrvClaimMsgCurNo"></span> closes.
+          </div>
+        </div>
+        <div class="opnPrvRoundSpacer">
+        </div>
+      </div>
+      <div id="AopnCurYourTickets" class="hidden" style="clear:both">
+        <div class="opnCurYourTicketsTitle">Your tickets</div>
+        <div id="AopnCurYourTicketsList">
+        </div>
+      </div>
+      <div id="AopnPrvYourTickets" class="hidden" style="clear:both">
+        <div class="opnPrvYourTicketsTitle">Your tickets</div>
+        <div id="AopnPrvYourTicketsList">
+        </div>
+      </div>
+
+      <!--
+          PIRATE'S booty
+          current round closed
+        -->
+      <div id="AclsRoundInfo" class="hidden" style="clear:both">
+        <div class="clsCurRoundAnnounce">
+          <span>PIRATE'S BOOTY<br/>
+            round #<span id="AclsCurLotteryRoundNo"></span>
+          </span>
+        </div>
+        <img class="clsCurImg" src="images/closed.png">
+        <div class="clsCurStats">
+          <div class="statRow">
+            <div class="clsCurPrompt" class="statCol">FINAL</div>
+            <div id="AclsCurPrize" class="statCol"></div>
+            <div id="AclsCurTickets" class="statCol"></div>
+          </div>
+        </div>
+        <div class="clsCurWinnerMsg">Winning ticket is selected <i>after</i> previous round prize is claimed.
+        </div>
+        <!--
+            PIRATE'S booty
+            previous round - current round closed
+          -->
+        <div id="AclsPrvRoundInfo">
+          <div class="clsPrvRoundAnnounce">
+            <span>PREVIOUS ROUND<br/>
+              round #<span id="AclsPrvRoundNo"></span>
+            </span>
+          </div>
+          <div class="clsPrvWinningTicket">
+            <span class="clsPrvWinningTicketPrompt">Winning ticket</span>
+            <div class="clsPrvWinningTicketImg"><span id="AclsPrvWinningTicketNo"></span></div>
+            <button id="AclsPrvClaimWinButton" type="button" class="hidden">Claim&nbsp;Prize!</button>
+          </div>
+          <div class="clsPrvDurationDiv">
+            <div id="AclsPrvClaimDeadline"></div>
+            <div class="clsPrvClaimDeadlinePrompt">claim&nbsp;timer</div>
+          </div>
+          <div class="clsPrvStats">
+            <div class="statRow">
+              <div class="clsPrvPrompt" class="statCol">FINAL</div>
+              <div id="AclsPrvPrize" class="statCol"></div>
+              <div id="AclsPrvTickets" class="statCol"></div>
+            </div>
+          </div>
+          <div id="AclsPrvDeadlineNotExpired" class="clsPrvDeadlineMsg visibleB">Prize must be claimed before the expiration of the claim-timer,
+            or else it will be considered <i>abandoned</i>!
+          </div>
+          <div id="AclsPrvDeadlineYesExpired" class="clsPrvDeadlineMsg hidden">Prize is <i>abandoned</i>! Any participant can
+            claim 50% of the prize!
+          </div>
+        </div>
+      </div>
+      <div id="AclsCurYourTickets" class="hidden" style="clear:both">
+	<div class="clsCurYourTicketsTitle">Your tickets</div>
+	<div id="AclsCurYourTicketsList">
+	</div>
+      </div>
+      <div id="AclsPrvYourTickets" class="hidden" style="clear:both">
+	<div class="clsPrvYourTicketsTitle">Your tickets</div>
+	<div id="AclsPrvYourTicketsList">
+	</div>
+      </div>
+    </div>
+
+
+
+
+    <!--
+	BURIED TREASURE
+	current round open
+      -->
+    <div id="lotteryB">
+      <div id="BopnRoundInfo" class="hidden" style="clear:both">
+        <div class="opnCurRoundAnnounce">
+          <span>BURIED TREASURE<br/>
+            round #<span id="BopnCurLotteryRoundNo"></span>
+          </span>
+        </div>
+        <img class="opnCurImg" src="images/open.png">
+        <div class="opnCurDurationDiv">
+          <div id="BopnCurMaxDuration"></div>
+          <div class="opnCurMaxDurationPrompt">maximum&nbsp;duration</div>
+          <div id="BopnCurTicketsRemain"></div>
+          <div class="opnCurTicketsRemainPrompt">tickets&nbsp;remain</div>
+        </div>
+        <div class="opnCurStats">
+          <div class="statRow">
+            <div class="opnCurMaxPrompt">MAX</div>
+            <div id="BopnCurMaxPrize" class="statCol"></div>
+            <div id="BopnCurMaxTickets" class="statCol"></div>
+          </div>
+          <div class="statRow">
+            <div class="opnCurCurPrompt" class="statCol">CURRENT</div>
+            <div id="BopnCurPrizeSoFar" class="statCol"></div>
+            <div id="BopnCurTicketsSoFar" class="statCol"></div>
+          </div>
+        </div>
+        <div class="opnCurTicketPricePrompt">Ticket price:<span id="BopnCurTicketPrice"></span></div>
+        <button id="BopnCurPurchaseButton" class="hidden" type="button">Purchase Ticket</button>
+        <div id="BopnCurExpiredDur" class="hidden">
+          <span>This round of the lottery has exceeded its nominal duration. Anyone can close this round at any time!</span>
+          <button class="opnCurCloseButton" type="button">Close Round</button>
+        </div>
+        <!--
+	    BURIED TREASURE
+            previous round -- current round open
+          -->
+        <div id="BopnPrvRoundInfo">
+          <div class="opnPrvRoundAnnounce">
+            <span>PREVIOUS ROUND<br/>
+              round #<span id="BopnPrvRoundNo"></span>
+            </span>
+          </div>
+          <div class="opnPrvWinningTicket">
+            <span class="opnPrvWinningTicketPrompt">Winning ticket</span>
+            <div class="opnPrvWinningTicketImg"><span id="BopnPrvWinningTicketNo"></span></div>
+          </div>
+          <div class="opnPrvStats">
+            <div class="statRow">
+              <div class="opnPrvPrompt" class="statCol">FINAL</div>
+              <div id="BopnPrvPrize" class="statCol"></div>
+              <div id="BopnPrvTickets" class="statCol"></div>
+            </div>
+          </div>
+          <div class="opnPrvClaimMsg">Round <span id="BopnPrvClaimMsgPrvNo"></span> prize can only be claimed
+            after round <span id="BopnPrvClaimMsgCurNo"></span> closes.
+          </div>
+        </div>
+        <div class="opnPrvRoundSpacer">
+        </div>
+      </div>
+      <div id="BopnCurYourTickets" class="hidden" style="clear:both">
+        <div class="opnCurYourTicketsTitle">Your tickets</div>
+        <div id="BopnCurYourTicketsList">
+        </div>
+      </div>
+      <div id="BopnPrvYourTickets" class="hidden" style="clear:both">
+        <div class="opnPrvYourTicketsTitle">Your tickets</div>
+        <div id="BopnPrvYourTicketsList">
+        </div>
+      </div>
+
+      <!--
+	  BURIED TREASURE
+          current round closed
+        -->
+      <div id="BclsRoundInfo" class="hidden" style="clear:both">
+        <div class="clsCurRoundAnnounce">
+          <span>BURIED TREASURE<br/>
+            round #<span id="BclsCurLotteryRoundNo"></span>
+          </span>
+        </div>
+        <img class="clsCurImg" src="images/closed.png">
+        <div class="clsCurStats">
+          <div class="statRow">
+            <div class="clsCurPrompt" class="statCol">FINAL</div>
+            <div id="BclsCurPrize" class="statCol"></div>
+            <div id="BclsCurTickets" class="statCol"></div>
+          </div>
+        </div>
+        <div class="clsCurWinnerMsg">Winning ticket is selected <i>after</i> previous round prize is claimed.
+        </div>
+        <!--
+	    BURIED TREASURE
+            previous round - current round closed
+          -->
+        <div id="BclsPrvRoundInfo">
+          <div class="clsPrvRoundAnnounce">
+            <span>PREVIOUS ROUND<br/>
+              round #<span id="BclsPrvRoundNo"></span>
+            </span>
+          </div>
+          <div class="clsPrvWinningTicket">
+            <span class="clsPrvWinningTicketPrompt">Winning ticket</span>
+            <div class="clsPrvWinningTicketImg"><span id="BclsPrvWinningTicketNo"></span></div>
+            <button id="BclsPrvClaimWinButton" type="button" class="hidden">Claim&nbsp;Prize!</button>
+          </div>
+          <div class="clsPrvDurationDiv">
+            <div id="BclsPrvClaimDeadline"></div>
+            <div class="clsPrvClaimDeadlinePrompt">claim&nbsp;timer</div>
+          </div>
+          <div class="clsPrvStats">
+            <div class="statRow">
+              <div class="clsPrvPrompt" class="statCol">FINAL</div>
+              <div id="BclsPrvPrize" class="statCol"></div>
+              <div id="BclsPrvTickets" class="statCol"></div>
+            </div>
+          </div>
+          <div id="BclsPrvDeadlineNotExpired" class="clsPrvDeadlineMsg visibleB">Prize must be claimed before the expiration of the claim-timer,
+            or else it will be considered <i>abandoned</i>!
+          </div>
+          <div id="BclsPrvDeadlineYesExpired" class="clsPrvDeadlineMsg hidden">Prize is <i>abandoned</i>! Any participant can
+            claim 50% of the prize!
+          </div>
+        </div>
+      </div>
+      <div id="BclsCurYourTickets" class="hidden" style="clear:both">
+	<div class="clsCurYourTicketsTitle">Your tickets</div>
+	<div id="BclsCurYourTicketsList">
+	</div>
+      </div>
+      <div id="BclsPrvYourTickets" class="hidden" style="clear:both">
+	<div class="clsPrvYourTicketsTitle">Your tickets</div>
+	<div id="BclsPrvYourTicketsList">
+	</div>
+      </div>
+    </div>
+
+    <p>&nbsp;</p>
+    <div id="statusDiv" class="statusDivHide"></div>
+    <div id="bodySpacer">
+    </div>
+</body>
+</html>
