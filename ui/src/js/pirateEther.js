@@ -4,7 +4,6 @@
 //
 const common = require('./common');
 const ether = require('./ether');
-const ethUtils = require('ethereumjs-util');
 const ethtx = require('ethereumjs-tx');
 const ethabi = require('ethereumjs-abi');
 const Buffer = require('buffer/').Buffer;
@@ -13,25 +12,52 @@ const keccak = require('keccakjs');
 
 const pirateEther = module.exports = {
 
-    ropsten_contract_addrs: [ '0x7eb6d16aea9eF99b83c565549791601895090a11', '0x72a7769d275CA6476681DcBf11Ab4473bC985556' ],
+    ropsten_contract_addrs: [ '0xd80D3BB4a04a4f7bBB5C334dc75E26bCe086b430', '0x1a73fC05AF2Ff67444FA12b91C80A436eE766Dfb' ],
     kovan_contract_addrs: [],
     main_contract_addrs: [],
     contractInstances: [],
+    lotteryNames: [],
     buyTicketABI: null,
     claimPrizeABI: null,
+    chainId: 0,
     CONTRACT_ADDRS: [],
-    CONTRACT_ABI:  '[{"constant":false,"inputs":[{"name":"_sigV","type":"uint8"},{"name":"_sigR","type":"bytes32"},{"name":"_sigS","type":"bytes32"},{"name":"_ticket","type":"uint256"}],"name":"claimPrize","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"max_ticket_price","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"roundCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"killContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balances","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_addr","type":"address"},{"name":"_round","type":"uint256"},{"name":"_startIdx","type":"uint256"},{"name":"_maxResults","type":"uint256"}],"name":"getTickets","outputs":[{"name":"_idx","type":"uint256"},{"name":"_tickets","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_round","type":"uint256"},{"name":"_ticket","type":"uint256"}],"name":"getTicketOwner","outputs":[{"name":"_owner","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_addr","type":"address"}],"name":"getCurrentInfo","outputs":[{"name":"_round","type":"uint256"},{"name":"_playerTicketCount","type":"uint256"},{"name":"_ticketPrice","type":"uint256"},{"name":"_ticketCount","type":"uint256"},{"name":"_begDate","type":"uint256"},{"name":"_endDate","type":"uint256"},{"name":"_prize","type":"uint256"},{"name":"_isOpen","type":"bool"},{"name":"_maxTickets","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"rounds","outputs":[{"name":"maxTickets","type":"uint256"},{"name":"ticketPrice","type":"uint256"},{"name":"ticketCount","type":"uint256"},{"name":"playersHash","type":"bytes32"},{"name":"begDate","type":"uint256"},{"name":"endDate","type":"uint256"},{"name":"winner","type":"uint256"},{"name":"prize","type":"uint256"},{"name":"isOpen","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"isLocked","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_sigV","type":"uint8"},{"name":"_sigR","type":"bytes32"},{"name":"_sigS","type":"bytes32"},{"name":"_ticket","type":"uint256"}],"name":"claimAbondonedPrize","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"min_ticket_price","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"closeRound","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_addr","type":"address"}],"name":"getPreviousInfo","outputs":[{"name":"_round","type":"uint256"},{"name":"_playerTicketCount","type":"uint256"},{"name":"_ticketPrice","type":"uint256"},{"name":"_ticketCount","type":"uint256"},{"name":"_begDate","type":"uint256"},{"name":"_endDate","type":"uint256"},{"name":"_prize","type":"uint256"},{"name":"_winningTicket","type":"uint256"},{"name":"_winner","type":"address"},{"name":"_claimDeadline","type":"uint256"},{"name":"_playersHash","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"buyTicket","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"retainedBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"lock","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_name","type":"string"},{"name":"_min_ticket_price","type":"uint256"},{"name":"_max_ticket_price","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"claimHash","type":"bytes32"},{"indexed":false,"name":"recovered","type":"address"}],"name":"DebugEvent0","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"V","type":"uint8"},{"indexed":false,"name":"R","type":"bytes32"},{"indexed":false,"name":"S","type":"bytes32"},{"indexed":false,"name":"ticket","type":"uint256"}],"name":"DebugEvent1","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"round","type":"uint256"},{"indexed":false,"name":"ticket","type":"uint256"},{"indexed":false,"name":"prize","type":"uint256"}],"name":"WinnerEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"round","type":"uint256"},{"indexed":false,"name":"payee","type":"address"},{"indexed":false,"name":"prize","type":"uint256"},{"indexed":false,"name":"payout","type":"uint256"}],"name":"PayoutEvent","type":"event"}]',
+    CONTRACT_ABI:
+    '[{"constant":false,"inputs":[{"name":"_sigV","type":"uint8"},{"name":"_sigR","type":"bytes32"},{"name":"_sigS","type":"bytes32"},{"name":"_ticket","type":"uint256"}],"name":"claimPrize","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"max_ticket_price","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"roundCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"killContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balances","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_addr","type":"address"},{"name":"_round","type":"uint256"},{"name":"_startIdx","type":"uint256"},{"name":"_maxResults","type":"uint256"}],"name":"getTickets","outputs":[{"name":"_idx","type":"uint256"},{"name":"_tickets","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_round","type":"uint256"},{"name":"_ticket","type":"uint256"}],"name":"getTicketOwner","outputs":[{"name":"_owner","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_addr","type":"address"}],"name":"getCurrentInfo","outputs":[{"name":"_round","type":"uint256"},{"name":"_playerTicketCount","type":"uint256"},{"name":"_ticketPrice","type":"uint256"},{"name":"_ticketCount","type":"uint256"},{"name":"_begDate","type":"uint256"},{"name":"_endDate","type":"uint256"},{"name":"_prize","type":"uint256"},{"name":"_isOpen","type":"bool"},{"name":"_maxTickets","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"rounds","outputs":[{"name":"maxTickets","type":"uint256"},{"name":"ticketPrice","type":"uint256"},{"name":"ticketCount","type":"uint256"},{"name":"playersHash","type":"bytes32"},{"name":"begDate","type":"uint256"},{"name":"endDate","type":"uint256"},{"name":"winner","type":"uint256"},{"name":"prize","type":"uint256"},{"name":"isOpen","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"isLocked","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_sigV","type":"uint8"},{"name":"_sigR","type":"bytes32"},{"name":"_sigS","type":"bytes32"},{"name":"_ticket","type":"uint256"}],"name":"claimAbondonedPrize","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"min_ticket_price","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"closeRound","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_addr","type":"address"}],"name":"getPreviousInfo","outputs":[{"name":"_round","type":"uint256"},{"name":"_playerTicketCount","type":"uint256"},{"name":"_ticketPrice","type":"uint256"},{"name":"_ticketCount","type":"uint256"},{"name":"_begDate","type":"uint256"},{"name":"_endDate","type":"uint256"},{"name":"_prize","type":"uint256"},{"name":"_winningTicket","type":"uint256"},{"name":"_winner","type":"address"},{"name":"_claimDeadline","type":"uint256"},{"name":"_playersHash","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"buyTicket","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"retainedBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"nameHash","outputs":[{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"lock","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_chainId","type":"uint256"},{"name":"_name","type":"string"},{"name":"_min_ticket_price","type":"uint256"},{"name":"_max_ticket_price","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"claimHash","type":"bytes32"},{"indexed":false,"name":"recovered","type":"address"}],"name":"DebugEvent0","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"V","type":"uint8"},{"indexed":false,"name":"R","type":"bytes32"},{"indexed":false,"name":"S","type":"bytes32"},{"indexed":false,"name":"ticket","type":"uint256"}],"name":"DebugEvent1","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"round","type":"uint256"},{"indexed":false,"name":"ticket","type":"uint256"},{"indexed":false,"name":"prize","type":"uint256"}],"name":"WinnerEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"round","type":"uint256"},{"indexed":false,"name":"payee","type":"address"},{"indexed":false,"name":"prize","type":"uint256"},{"indexed":false,"name":"payout","type":"uint256"}],"name":"PayoutEvent","type":"event"}]',
 
 
     // network = [ 'Mainnet' | 'Morden test network' | 'Ropsten test network' | 'Rinkeby test network' | 'Kovan test network' ]
     setNetwork: function(network) {
-    	if (network.indexOf('Kovan') >= 0)
+    	if (network.indexOf('Kovan') >= 0) {
 	    pirateEther.CONTRACT_ADDRS = pirateEther.kovan_contract_addrs;
-	else if (network.indexOf('Ropsten') >= 0)
+	    pirateEther.chainId = 42;
+	} else if (network.indexOf('Ropsten') >= 0) {
 	    pirateEther.CONTRACT_ADDRS = pirateEther.ropsten_contract_addrs;
-	else
+	    pirateEther.chainId = 3;
+	} else {
 	    alert(network + ' is not a supported network');
+	}
 	console.log('setNetwork: pirate contract addrs = ' + pirateEther.CONTRACT_ADDRS.toString());
+    },
+
+    // cb(err, name)
+    getName: function(lottery, cb) {
+	const lotteryIdx = lottery == 'A' ? 0 : 1;
+	if (!!pirateEther.lotteryNames[lotteryIdx]) {
+	    cb(null, pirateEther.lotteryNames[lotteryIdx]);
+	    return;
+	}
+	console.log('getName(' + lottery + '): lotteryIdx = ' + lotteryIdx);
+	if (!pirateEther.contractInstances[lotteryIdx])
+	    initcontractInstance(lotteryIdx);
+	pirateEther.contractInstances[lotteryIdx].name((err, resultObj) => {
+	    console.log('getName(' + lottery + '): name = ' + resultObj.toString());
+	    if (!!err) {
+		cb(err, null);
+		return;
+	    }
+	    pirateEther.lotteryNames[lotteryIdx] = resultObj.toString();
+	    cb(err, pirateEther.lotteryNames[lotteryIdx]);
+	});
     },
 
 
@@ -181,47 +207,60 @@ const pirateEther = module.exports = {
     //
     // cb(err, signature)
     //
-    createClaim: function(lottery, address, ticket, playerHash, cb) {
+    createClaim: function(lottery, address, round, ticket, playerHash, cb) {
 	const lotteryIdx = lottery == 'A' ? 0 : 1;
 	const domain = [
 	    { name: "name", type: "string" },
 	    { name: "version", type: "string" },
+	    { name: "chainId", type: "uint256" },
 	    { name: "verifyingContract", type: "address" },
 	];
 	const domainData = {
 	    name: "Pirate Lottery",
 	    version: "1.0",
+	    chainId: pirateEther.chainId,
 	    verifyingContract: pirateEther.CONTRACT_ADDRS[lotteryIdx],
 	};
 	const claim = [
+	    { name: "lottery",    type: "string" },
+	    { name: "round",      type: "uint256" },
 	    { name: "ticket",     type: "uint256" },
 	    { name: "playerHash", type: "uint256" },
 	];
-	const claimData = {
-	    ticket: ticket,
-	    playerHash: playerHash,
-	};
-	const data = JSON.stringify({
-	    types: {
-		EIP712Domain: domain,
-		Claim: claim,
-	    },
-	    domain: domainData,
-	    primaryType: "Claim",
-	    message: claimData,
-	});
-	const typedDataParms = {
-	    method: "eth_signTypedData_v3",
-	    params: [address, data],
-	    from: address,
-	};
-	common.web3.currentProvider.sendAsync(typedDataParms, function(err, result) {
-	    if (err) {
-		console.log('createClaim: err = ' + err);
+	pirateEther.getName(lottery, function(err, name) {
+	    if (!!err) {
+		console.log('createClaim failed to retrieve lottery name: err = ' + err);
 		cb(err, null);
 		return;
 	    }
-	    cb(err, result.result);
+	    const claimData = {
+		lottery: name,
+		round: round,
+		ticket: ticket,
+		playerHash: playerHash,
+	    };
+	    const data = JSON.stringify({
+		types: {
+		    EIP712Domain: domain,
+		    Claim: claim,
+		},
+		domain: domainData,
+		primaryType: "Claim",
+		message: claimData,
+	    });
+	    const typedDataParms = {
+		method: "eth_signTypedData_v3",
+		params: [address, data],
+		from: address,
+	    };
+	    common.web3.currentProvider.sendAsync(typedDataParms, function(err, result) {
+		if (!!err) {
+		    console.log('createClaim: err = ' + err);
+		    cb(err, null);
+		    return;
+		}
+		cb(err, result.result);
+	    });
 	});
     },
 

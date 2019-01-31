@@ -81,8 +81,8 @@ contract PirateLottery {
     uint256 playerHash;
   }
   bytes32 private DOMAIN_SEPARATOR;
-  bytes32 private constant CLAIM_TYPEHASH = keccak256("Claim(uint256 ticket,uint256 playerHash)");
-  bytes32 private constant EIP712DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version,address verifyingContract)");
+  bytes32 private constant CLAIM_TYPEHASH = keccak256("Claim(string lottery,uint256 round,uint256 ticket,uint256 playerHash)");
+  bytes32 private constant EIP712DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
 
 
   // -------------------------------------------------------------------------
@@ -91,6 +91,7 @@ contract PirateLottery {
   bool    public isLocked;
   string  public name;
   address payable public owner;
+  bytes32 nameHash;
   uint256 public min_ticket_price;
   uint256 public max_ticket_price;
   uint256 public retainedBalance;
@@ -115,7 +116,7 @@ contract PirateLottery {
   //
   //  constructor
   //
-  constructor(string memory _name, uint256 _min_ticket_price, uint256 _max_ticket_price) public {
+  constructor(uint256 _chainId, string memory _name, uint256 _min_ticket_price, uint256 _max_ticket_price) public {
     owner = msg.sender;
     name = _name;
     min_ticket_price = _min_ticket_price;
@@ -147,7 +148,9 @@ contract PirateLottery {
     DOMAIN_SEPARATOR = keccak256(abi.encode(EIP712DOMAIN_TYPEHASH,
 					    keccak256("Pirate Lottery"),
 					    keccak256("1.0"),
+					    _chainId,
 					    address(this)));
+    nameHash = keccak256(abi.encodePacked(name));
   }
 
 
@@ -304,7 +307,7 @@ contract PirateLottery {
   function claimPrizeForTicket(uint8 _sigV, bytes32 _sigR, bytes32 _sigS, uint256 _ticket, uint256 _ownerCutPct) internal {
     Round storage _currentRound = rounds[roundCount];
     Round storage _previousRound = rounds[roundCount - 1];
-    bytes32 _claimHash = keccak256(abi.encode(CLAIM_TYPEHASH, _ticket, _currentRound.playersHash));
+    bytes32 _claimHash = keccak256(abi.encode(CLAIM_TYPEHASH, nameHash, roundCount - 1, _ticket, _currentRound.playersHash));
     bytes32 _domainClaimHash = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, _claimHash));
     address _recovered = ecrecover(_domainClaimHash, _sigV, _sigR, _sigS);
     emit DebugEvent0(_claimHash, _recovered);

@@ -60,9 +60,9 @@ function setLotteryButtonHandlers(lottery) {
 	});
     });
     //
-    const claimWithTicketFcn = (lottery, claimFcn, ticket, playerHash) => {
+    const claimWithTicketFcn = (lottery, claimFcn, round, ticket, playerHash) => {
 	common.showWaitingForMetaMask(true);
-	pirateEther.createClaim(lottery, common.web3.eth.accounts[0], ticket, playerHash, function(err, signature) {
+	pirateEther.createClaim(lottery, common.web3.eth.accounts[0], round, ticket, playerHash, function(err, signature) {
 	    signature = signature.substring(2);
 	    const r = '0x' + signature.substring(0, 64);
 	    const s = '0x' + signature.substring(64, 128);
@@ -81,7 +81,7 @@ function setLotteryButtonHandlers(lottery) {
 	    console.log('clsPrvClaimWinButton: playersHash = ' + previousInfo.playerHash);
 	    if (previousInfo.winner == common.web3.eth.accounts[0]) {
 		const ticket = common.numberToHex256(previousInfo.winningTicket);
-		claimWithTicketFcn(lottery, pirateEther.claimPrize, ticket, previousInfo.playerHash);
+		claimWithTicketFcn(lottery, pirateEther.claimPrize, previousInfo.round, ticket, previousInfo.playerHash);
 	    } else {
 		console.log('clsPrvClaimWinButton: not the winner...');
 		const nowBN = new BN(Date.now() / 1000);
@@ -94,7 +94,7 @@ function setLotteryButtonHandlers(lottery) {
 			console.log('clsPrvClaimWinButton: we have a ticket');
 			if (tickets.length > 0) {
 			    const ticket = tickets[0];
-			    claimWithTicketFcn(lottery, pirateEther.claimAbondonedPrize, ticket, previousInfo.playerHash);
+			    claimWithTicketFcn(lottery, pirateEther.claimAbondonedPrize, previousInfo.round, ticket, previousInfo.playerHash);
 			}
 		    });
 		}
