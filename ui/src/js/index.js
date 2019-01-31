@@ -223,11 +223,10 @@ function handleUnlockedMetaMask() {
     index.localStoragePrefix = (common.web3.eth.accounts[0]).substring(2, 10) + '-';
     const accountArea = document.getElementById('accountArea');
     accountArea.value = 'Your account: ' + common.web3.eth.accounts[0];
-    ether.getBalance('szabo', function(err, balance) {
+    ether.getBalance('ether', function(err, balance) {
 	const balanceArea = document.getElementById('balanceArea');
-	const balanceSzabo = parseInt(balance);
-	console.log('balanceSzabo = ' + balanceSzabo);
-	const balanceETH = (balanceSzabo / ether.SZABO_PER_ETH).toFixed(6);
+	console.log('balance (eth) = ' + balance);
+	const balanceETH = parseFloat(balance).toFixed(6);
 	balanceArea.value = 'Balance: ' + balanceETH.toString(10) + ' Eth';
     });
     ether.getNetwork(function(err, network) {
