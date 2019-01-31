@@ -46,9 +46,11 @@ contract PirateLottery {
   uint constant MIN_TICKETS = 10;
   uint constant MAX_TICKETS = 50000000;
   //uint constant LONG_DURATION = 5 days;
-  uint constant LONG_DURATION = 1 days;
-  uint constant SHORT_DURATION = 12 hours;
-  uint constant MAX_CLAIM_DURATION = 5 days;
+  uint constant LONG_DURATION = 2 hours;
+  //uint constant SHORT_DURATION = 12 hours;
+  uint constant SHORT_DURATION = 1 hours;
+  //uint constant MAX_CLAIM_DURATION = 5 days;
+  uint constant MAX_CLAIM_DURATION = 1 hours;
 
 
   //
@@ -302,12 +304,12 @@ contract PirateLottery {
   function claimPrizeForTicket(uint8 _sigV, bytes32 _sigR, bytes32 _sigS, uint256 _ticket, uint256 _ownerCutPct) internal {
     Round storage _currentRound = rounds[roundCount];
     Round storage _previousRound = rounds[roundCount - 1];
-    bytes32 _claimHash = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR,
-	     keccak256(abi.encode(CLAIM_TYPEHASH, _ticket, _currentRound.playersHash))));
-    address _recovered = ecrecover(_claimHash, _sigV, _sigR, _sigS);
+    bytes32 _claimHash = keccak256(abi.encode(CLAIM_TYPEHASH, _ticket, _currentRound.playersHash));
+    bytes32 _domainClaimHash = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, _claimHash));
+    address _recovered = ecrecover(_domainClaimHash, _sigV, _sigR, _sigS);
     emit DebugEvent0(_claimHash, _recovered);
     emit DebugEvent1(_sigV, _sigR, _sigS, _ticket);
-    //require(_previousRound.ticketOwners[_ticket] == _recovered, "claim is not valid");
+    require(_previousRound.ticketOwners[_ticket] == _recovered, "claim is not valid");
     uint256 _ownerCut = _ownerCutPct * _previousRound.prize / 100;
     balances[owner] = _ownerCut;
     uint256 _payout = _previousRound.prize - _ownerCut;
