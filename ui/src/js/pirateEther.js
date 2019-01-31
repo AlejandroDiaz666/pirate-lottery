@@ -236,7 +236,7 @@ const pirateEther = module.exports = {
 	    const claimData = {
 		lottery: name,
 		round: round,
-		ticket: ticket,
+		ticket: common.numberToBN(ticket).toString(10),
 		playerHash: playerHash,
 	    };
 	    const data = JSON.stringify({
