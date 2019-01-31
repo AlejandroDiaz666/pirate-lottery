@@ -53,6 +53,7 @@ function setLotteryButtonHandlers(lottery) {
     opnCurPurchaseButton.addEventListener('click', function() {
 	common.showWaitingForMetaMask(true);
 	pirateEther.buyTicket(lottery, opnCurPurchaseButton.price, function(err, txid) {
+	    disableAllButtons();
 	    common.showWaitingForMetaMask(false);
 	    console.log('opnCurPurchaseButton.click: txid = ' + txid);
 	    common.waitForTXID(err, txid, 'Buy-Ticket', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
@@ -68,6 +69,7 @@ function setLotteryButtonHandlers(lottery) {
 	    const v = '0x' + signature.substring(128, 130);
 	    console.log('clsPrvClaimWinButton: signature = ' + signature);
 	    claimFcn(lottery, v, r, s, ticket, function(err, txid) {
+		disableAllButtons();
 		common.showWaitingForMetaMask(false);
 		console.log('clsPrvClaimWinButton.click: txid = ' + txid);
 		common.waitForTXID(err, txid, 'Claim-Prize', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
@@ -104,6 +106,7 @@ function setLotteryButtonHandlers(lottery) {
     withdrawButton.addEventListener('click', function() {
 	common.showWaitingForMetaMask(true);
 	pirateEther.withdraw(lottery, function(err, txid) {
+	    disableAllButtons();
 	    common.showWaitingForMetaMask(false);
 	    console.log('txid = ' + txid);
 	    common.waitForTXID(err, txid, 'Withdraw', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
@@ -338,7 +341,7 @@ function handleOpenRound(lottery, currentInfo, previousInfo) {
     opnCurTicketPrice.textContent = ether.convertWeiBNToComfort(ticketPriceBN);
     const opnCurPurchaseButton = document.getElementById(lottery + 'opnCurPurchaseButton');
     opnCurPurchaseButton.price = currentInfo.ticketPrice;
-    common.replaceElemClassFromTo(lottery + 'opnCurPurchaseButton',   'hidden',   'visibleB', false);
+    common.replaceElemClassFromTo(lottery + 'opnCurPurchaseButton', 'hidden',   'visibleB', false);
     //
     const playerTicketCount = parseInt(currentInfo.playerTicketCount);
     console.log('playerTicketCount = ' + playerTicketCount);
@@ -506,4 +509,13 @@ function makeTicketListElems(tableId, playerTicketCount, tickets) {
         div1.appendChild(area);
         table.appendChild(div0);
     }
+}
+
+function disableAllButtons() {
+    document.getElementById('AopnCurPurchaseButton').disabled = true;
+    document.getElementById('BopnCurPurchaseButton').disabled = true;
+    document.getElementById('withdrawAButton').disabled = true;
+    document.getElementById('withdrawBButton').disabled = true;
+    document.getElementById('AclsPrvClaimWinButton').disabled = true;
+    document.getElementById('BclsPrvClaimWinButton').disabled = true;
 }

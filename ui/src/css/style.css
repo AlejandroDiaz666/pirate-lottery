@@ -95,7 +95,7 @@ body {
 /* message telling the user that we are waiting for metamask */
 #metaMaskDiv {
     position: fixed;
-    z-index: 1;
+    z-index: 2;
     left: 55%;
     top: 15%;
     width: 300px;
@@ -447,6 +447,10 @@ body {
 #AopnCurPurchaseButton:hover,
 #BopnCurPurchaseButton:hover {
     cursor: pointer;
+}
+#AopnCurPurchaseButton[disabled]:hover,
+#BopnCurPurchaseButton[disabled]:hover {
+    cursor: default;
 }
 
 /*
