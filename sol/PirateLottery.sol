@@ -94,7 +94,6 @@ contract PirateLottery {
   bytes32 nameHash;
   uint256 public min_ticket_price;
   uint256 public max_ticket_price;
-  uint256 public retainedBalance;
   uint256 public roundCount;
   mapping (uint256 => Round) public rounds;
   mapping (address => uint256) public balances;
@@ -314,9 +313,9 @@ contract PirateLottery {
     emit DebugEvent1(_sigV, _sigR, _sigS, _ticket);
     require(_previousRound.ticketOwners[_ticket] == _recovered, "claim is not valid");
     uint256 _ownerCut = _ownerCutPct * _previousRound.prize / 100;
-    balances[owner] = _ownerCut;
+    balances[owner] += _ownerCut;
     uint256 _payout = _previousRound.prize - _ownerCut;
-    balances[msg.sender] = _payout;
+    balances[msg.sender] += _payout;
     bytes32 _winningHash = keccak256(abi.encodePacked(_currentRound.playersHash, _sigV, _sigR, _sigS));
     _currentRound.winner = uint256(_winningHash) % _currentRound.ticketCount + 1;
     emit PayoutEvent(roundCount - 1, msg.sender, _previousRound.prize, _payout);
