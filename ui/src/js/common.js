@@ -453,12 +453,18 @@ const common = module.exports = {
 
     //display (or clear) "waiting for metamask" dialog
     // a div with id = metaMaskDiv must exist. in addition classes "metaMaskDivHide" and "metaMaskDivShow" must exist.
-    showWaitingForMetaMask: function(show) {
+    showWaitingForMetaMask: function(show, pulse) {
 	const metaMaskModal = document.getElementById('metaMaskDiv');
-	if (show)
+	if (!!show) {
 	    common.replaceElemClassFromTo('metaMaskDiv', 'metaMaskDivHide', 'metaMaskDivShow', true);
-	else
-	    common.replaceElemClassFromTo('metaMaskDiv', 'metaMaskDivShow', 'metaMaskDivHide', true);
+	    if (!!pulse)
+		common.replaceElemClassFromTo('metaMaskDiv', 'metaMaskNoPulse', 'metaMaskPulse', null);
+	    else
+		common.replaceElemClassFromTo('metaMaskDiv', 'metaMaskPulse', 'metaMaskNoPulse', null);
+	} else {
+	    common.replaceElemClassFromTo('metaMaskDiv', 'metaMaskDivShow', 'metaMaskDivHide', null);
+	    common.replaceElemClassFromTo('metaMaskDiv', 'metaMaskPulse', 'metaMaskNoPulse', null);
+	}
     },
 
 

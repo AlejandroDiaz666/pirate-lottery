@@ -51,26 +51,27 @@ function setCommonButtonHandlers() {
 function setLotteryButtonHandlers(lottery) {
     const opnCurPurchaseButton = document.getElementById(lottery + 'opnCurPurchaseButton');
     opnCurPurchaseButton.addEventListener('click', function() {
-	common.showWaitingForMetaMask(true);
+	common.showWaitingForMetaMask(true, false);
 	pirateEther.buyTicket(lottery, opnCurPurchaseButton.price, function(err, txid) {
 	    disableAllButtons();
-	    common.showWaitingForMetaMask(false);
+	    common.showWaitingForMetaMask(false, false);
 	    console.log('opnCurPurchaseButton.click: txid = ' + txid);
 	    common.waitForTXID(err, txid, 'Buy-Ticket', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
 	});
     });
     //
     const claimWithTicketFcn = (lottery, claimFcn, round, ticket, playerHash) => {
-	common.showWaitingForMetaMask(true);
+	common.showWaitingForMetaMask(true, false);
 	pirateEther.createClaim(lottery, common.web3.eth.accounts[0], round, ticket, playerHash, function(err, signature) {
 	    signature = signature.substring(2);
 	    const r = '0x' + signature.substring(0, 64);
 	    const s = '0x' + signature.substring(64, 128);
 	    const v = '0x' + signature.substring(128, 130);
 	    console.log('clsPrvClaimWinButton: signature = ' + signature);
+	    common.showWaitingForMetaMask(true, true);
 	    claimFcn(lottery, v, r, s, ticket, function(err, txid) {
 		disableAllButtons();
-		common.showWaitingForMetaMask(false);
+		common.showWaitingForMetaMask(false, false);
 		console.log('clsPrvClaimWinButton.click: txid = ' + txid);
 		common.waitForTXID(err, txid, 'Claim-Prize', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
 	    });
@@ -104,10 +105,10 @@ function setLotteryButtonHandlers(lottery) {
     });
     const withdrawButton = document.getElementById('withdraw' + lottery + 'Button');
     withdrawButton.addEventListener('click', function() {
-	common.showWaitingForMetaMask(true);
+	common.showWaitingForMetaMask(true, false);
 	pirateEther.withdraw(lottery, function(err, txid) {
 	    disableAllButtons();
-	    common.showWaitingForMetaMask(false);
+	    common.showWaitingForMetaMask(false, false);
 	    console.log('txid = ' + txid);
 	    common.waitForTXID(err, txid, 'Withdraw', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
 	});
@@ -206,7 +207,7 @@ function handleLockedMetaMask(err) {
     lotteryABalanceArea.value = '';
     const lotteryBBalanceArea = document.getElementById('lotteryBBalanceArea');
     lotteryBBalanceArea.value = '';
-    clearStatusDiv();
+    common.clearStatusDiv();
     alert(err);
 }
 
@@ -377,7 +378,7 @@ function handleOpenRound(lottery, currentInfo, previousInfo) {
     common.replaceElemClassFromTo(lottery + 'clsRoundInfo',      'visibleB', 'hidden',    true);
     common.replaceElemClassFromTo(lottery + 'clsCurYourTickets', 'visibleB', 'hidden',    true);
     common.replaceElemClassFromTo(lottery + 'clsPrvYourTickets', 'visibleB', 'hidden',    true);
-    clearStatusDiv();
+    common.clearStatusDiv();
 }
 
 
@@ -479,7 +480,7 @@ function handleClosedRound(lottery, currentInfo, previousInfo) {
     common.replaceElemClassFromTo(lottery + 'clsCurYourTickets', 'hidden',   'visibleB',  true);
     common.replaceElemClassFromTo(lottery + 'clsPrvYourTickets', 'hidden',   'visibleB',  true);
     common.replaceElemClassFromTo(lottery + 'clsRoundInfo',      'hidden',   'visibleB',  true);
-    clearStatusDiv();
+    common.clearStatusDiv();
 }
 
 
