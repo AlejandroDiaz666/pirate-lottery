@@ -94,7 +94,6 @@ body {
 
 /* message telling the user that we are waiting for metamask */
 #metaMaskDiv {
-    display: none;
     position: fixed;
     z-index: 1;
     left: 55%;
@@ -109,6 +108,7 @@ body {
 /* area for status of metamask transactions */
 #statusDiv {
     position: absolute;
+    z-index: 1;
     top: 100%;
     left: 0px;
     transform: translateY(-120%);

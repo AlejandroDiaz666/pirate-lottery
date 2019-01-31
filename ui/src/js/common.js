@@ -483,6 +483,7 @@ const common = module.exports = {
 	    console.log('replaceElemClassFromTo: could not find elem: ' + elemId);
 	elem.className = (elem.className).replace(from, to);
 	elem.disabled = disabled;
+	console.log('replaceElemClassFromTo: ' + elemId + ' class = ' + elem.className);
 	return(elem);
     },
 

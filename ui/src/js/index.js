@@ -3,7 +3,6 @@ const common = require('./common');
 const ether = require('./ether');
 const pirateEther = require('./pirateEther');
 const autoVersion = require('./autoVersion');
-const ethUtils = require('ethereumjs-util');
 const ethabi = require('ethereumjs-abi');
 const Buffer = require('buffer/').Buffer;
 const BN = require("bn.js");
@@ -56,7 +55,7 @@ function setLotteryButtonHandlers(lottery) {
 	pirateEther.buyTicket(lottery, opnCurPurchaseButton.price, function(err, txid) {
 	    common.showWaitingForMetaMask(false);
 	    console.log('opnCurPurchaseButton.click: txid = ' + txid);
-	    waitForTXID(err, txid, 'Buy-Ticket', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
+	    common.waitForTXID(err, txid, 'Buy-Ticket', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
 	});
     });
     //
@@ -71,7 +70,7 @@ function setLotteryButtonHandlers(lottery) {
 	    claimFcn(lottery, v, r, s, ticket, function(err, txid) {
 		common.showWaitingForMetaMask(false);
 		console.log('clsPrvClaimWinButton.click: txid = ' + txid);
-		waitForTXID(err, txid, 'Claim-Prize', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
+		common.waitForTXID(err, txid, 'Claim-Prize', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
 	    });
 	});
     };
@@ -107,7 +106,7 @@ function setLotteryButtonHandlers(lottery) {
 	pirateEther.withdraw(lottery, function(err, txid) {
 	    common.showWaitingForMetaMask(false);
 	    console.log('txid = ' + txid);
-	    waitForTXID(err, txid, 'Withdraw', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
+	    common.waitForTXID(err, txid, 'Withdraw', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
 	});
     });
 }
@@ -261,7 +260,6 @@ function handleUnlockedMetaMask() {
 		handleFcn('A', currentInfo, previousInfo);
 	    });
 	});
-	//
 	pirateEther.getCurrentInfo('B', common.web3.eth.accounts[0], function(err, currentInfo) {
 	    console.log('handleUnlockedMetaMask: getCurrentInfo err = ' + err);
 	    pirateEther.getPreviousInfo('B', common.web3.eth.accounts[0], function(err, previousInfo) {
