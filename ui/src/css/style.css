@@ -98,7 +98,7 @@ body {
 /* message telling the user that we are waiting for metamask */
 #metaMaskDiv {
     position: fixed;
-    z-index: 2;
+    z-index: 3;
     left: 55%;
     top: 15%;
     width: 300px;
@@ -257,6 +257,83 @@ body {
 .closeX:hover {
     cursor: pointer;
 }
+
+
+/*
+ * plp div
+ */
+#plpTile {
+    position: absolute;
+    top: 180px;
+    left: 100%;
+    transform: translateX(-175px);
+    background-color: rgba(240, 240, 240, 0.4);
+    width: 160px;
+    height: 135px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 10px;
+}
+#plpTile:hover {
+    cursor: pointer;
+}
+#plpImg {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50px);
+}
+#plpTile p {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate3d(-50%, -200%, 0px);
+    font-size: 16px;
+    font-family: lato;
+    width: 100%;
+    text-align: center;
+}
+#plpModal {
+    z-index: 2;
+    position: absolute;
+    top: 29%;
+    left: 50%;
+    width: fit-content;
+    transform: translateX(-50%);
+    background-color: antiquewhite;
+    padding: 30px;
+    border-radius: 15px;
+}
+#plpBlather {
+    max-width: 40em;
+    margin: 10px;
+    font-family: lato;
+    font-size: 18px;
+}
+#plpTokenReserveArea, #AplpPointsArea, #BplpPointsArea, #plpTokensYouOwnArea, #plpTokenDividendsArea {
+    resize: none;
+}
+#lotteryABalanceDiv, #lotteryBBalanceDiv {
+    position: relative;
+    top: 0px;
+    left: 0px;
+}
+#AplpRedeemButton, #BplpRedeemButton, #withdrawDividendsButton {
+    vertical-align: top;
+}
+#xferPtsAButton:hover, #xferPtsBButton:hover, #withdrawDividendsButton:hover {
+    cursor: pointer;
+}
+#xferPtsAButton[disabled]:hover, #xferPtsBButton[disabled]:hover, #withdrawDividendsButton[disabled]:hover {
+    cursor: default;
+}
+
+
+/*
+ * lottery divs
+ */
 #lotteryA, #lotteryB {
     position: absolute;
     top: 30%;

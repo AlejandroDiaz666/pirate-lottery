@@ -96,6 +96,17 @@
       </p>
       <img src="images/claim-abandoned.png" style="width: 40%; position: relative; left: 50%; transform: translateX(-50%);"/>
       <p>
+	<u>Profit Sharing With Pirate Lottery Profit (PLP) Tokens</u></br>
+	The payout to the winner of each lottery round is equal to 98% of the revenue from ticket sales. The other
+	2% is profit, which goes to the holders of <i>PLP Tokens</i>. Two thirds of the PLP Tokens will be distributed to
+	the early users of the lottery. The way this works is that two thirds of the PLP Tokens are held in
+	the <i>PLP Reserve</i>. The lottery contract awards one <i>PLP Point</i> for every lottery ticket you purchase.
+	You can redeem the PLP Points that you accumulate for PLP Tokens from the PLP Reserve (1 token per point
+	until the PLP Reserve runs out of tokens). To see the number of PLP Points that you've accumlated; and to redeem
+	your PLP Points for PLP Tokens; and to withdraw your PLP dividends, just click on the treasure-chest icon:
+      </p>
+      <img src="images/treasure-chest-icon.png" style="width: 20%; position: relative; left: 50%; transform: translateX(-50%);"/>
+      <p>
 	<u>Technical Challenges:</u></br>
 	One of the challenges in creating a lottery program that runs on the Ethereum blockchain is that
 	Ethereum has no native random-number-generator. The basic reason for this is that no matter what
@@ -172,6 +183,45 @@
 	  <textarea id="lotteryBBalanceArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
 	  <button id="withdrawBButton" class="menuBarButton" type="button">Withdraw</button>
 	</div>
+      </div>
+    </div>
+
+    <div id="plpTile">
+      <img id="plpImg" src="images/treasure-chest.png">
+      <p>Pirate Lottery Profits!</p>
+    </div>
+    <div id="plpModal" class="hidden">
+      <span id="plpClose" class="closeX">X</span>
+      <div id="plpBlather">
+	<p>
+	  Whether you win or lose, you get one <i>Pirate Lottery Profit</i> (PLP) point for every
+	  lottery ticket you purchase. You can redeem your PLP points for PLP Tokens (1 token per
+	  point).
+	</p>
+	<p>
+	  PLP Tokens receive dividends from every lottery round, whether you participate or not!
+	</p>
+	<p>
+	  Minimum redemption amount: 10 points
+	</p>
+      </div>
+      <div id="plpTokenReserveDiv">
+	<textarea id="plpTokenReserveArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
+      </div>
+      <div id="plpTokensYouOwnDiv">
+	<textarea id="plpTokensYouOwnArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
+      </div>
+      <div id="AplpPointsDiv">
+	<textarea id="AplpPointsArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
+	<button id="AplpRedeemButton" type="button">Redeem points for PLP Tokens</button>
+      </div>
+      <div id="BplpPointsDiv">
+	<textarea id="BplpPointsArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
+	<button id="BplpRedeemButton" type="button">Redeem points for PLP Tokens</button>
+      </div>
+      <div id="plpTokenDividendsDiv">
+	<textarea id="plpTokenDividendsArea" rows="1" cols="55" readonly="readonly">&nbsp;</textarea>
+	<button id="withdrawDividendsButton" type="button">Withdraw dividends</button>
       </div>
     </div>
 

@@ -12,7 +12,6 @@ IMGSRCFILES := $(wildcard $(IMGSRCDIR)/*.jpg) $(wildcard $(IMGSRCDIR)/*.png)
 HTMSRCFILES := $(wildcard $(HTMSRCDIR)/*.html)
 CSSTHEMEFILES := $(wildcard $(CSSSRCDIR)/*-theme.css)
 CSSSTYLEFILES := $(patsubst $(CSSSRCDIR)/%-theme.css,$(CSSBLDDIR)/%-style.css,$(CSSTHEMEFILES))
-#CSSBLDFILES := $(CSSBLDDIR)/intro.css $(CSSSTYLEFILES)
 CSSBLDFILES := $(CSSSTYLEFILES)
 JSBLDFILES := $(patsubst $(JSSRCDIR)/%.js,$(JSBLDDIR)/%.js,$(JSSRCFILES))
 IMGBLDFILES := $(patsubst $(IMGSRCDIR)/%,$(IMGBLDDIR)/%,$(IMGSRCFILES))
@@ -36,11 +35,6 @@ deploy: all
 	cp $(CSSBLDDIR)/*_TIMESTAMP*.css release/css/
 	cp $(JSBLDDIR)/index_TIMESTAMP*.js release/bundle/
 	tar -czf pirateLottery-$(shell cat src/autoVersion.txt).tar.gz amt
-
-$(CSSBLDDIR)/intro.css : $(CSSSRCDIR)/intro.css
-	echo "doing intro"
-	if [ ! -d $(CSSBLDDIR) ]; then mkdir -p $(CSSBLDDIR); fi
-	cp $< $@
 
 $(CSSBLDDIR)/%-style.css : $(CSSSRCDIR)/%-theme.css $(CSSSRCDIR)/style.css
 	echo "doing style"
@@ -77,6 +71,7 @@ $(JSBLDDIR)/%.js : $(JSSRCDIR)/%.js
 $(JSBLDDIR)/index.js: $(JSSRCDIR)/index.js $(JSSRCDIR)/autoVersion.js \
 	$(JSBLDDIR)/ether.js \
 	$(JSBLDDIR)/pirateEther.js \
+	$(JSBLDDIR)/plpTokenEther.js \
 	$(JSBLDDIR)/common.js
 	echo "doing index.js"
 	browserify $< -o $@

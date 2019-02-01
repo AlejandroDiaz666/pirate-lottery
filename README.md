@@ -33,9 +33,16 @@ The claim message that the previous winner signs conforms to the EIP712 signatur
  - ChainId (Integer marking current chain, e.g. 1 for mainnet, 3 for Ropsten)
  - Contract Address (Address of the specific lottery contract instance)
 
+
+## Profit Sharing With Pirate Lottery Profit (PLP) Tokens
+
+The payout to the winner of each lottery round is equal to 98% of the revenue from ticket sales. The other 2% is profit, which goes to the holders of PLP Tokens. Two thirds of the PLP Tokens will be distributed to the early users of the lottery. The way this works is that two thirds of the PLP tokens are owned by a special *PLP Reserve Address*, which holds the tokens that will be distributed. The lottery contract awards one *PLP Point* per ticket to every ticket-purchaser; and ticket-purchasers can redeem the PLP Points that they accumulate for PLP Tokens from the PLP Reserve Address (1 Token per point until the Reserve Address runs out of tokens). The PLP Reserve Address is treated differently from all other token holder addresses in that it is prevented from transferring tokens in any other manner.
+
+
 ## Building
 
 * `Install browserfy`
+* `cd ui`
 * `npm install`
 * `make`
 * `cp -R build/* /var/web/html/`

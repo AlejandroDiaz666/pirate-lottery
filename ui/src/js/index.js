@@ -2,6 +2,7 @@
 const common = require('./common');
 const ether = require('./ether');
 const pirateEther = require('./pirateEther');
+const plpTokenEther = require('./plpTokenEther');
 const autoVersion = require('./autoVersion');
 const ethabi = require('ethereumjs-abi');
 const Buffer = require('buffer/').Buffer;
@@ -42,18 +43,42 @@ function setCommonButtonHandlers() {
 	common.replaceElemClassFromTo('howModal', 'hidden', 'visibleB', true);
     });
     const howClose = document.getElementById('howClose');
-    howClose.onclick = function(event) {
+    howClose.addEventListener('click', function() {
 	common.replaceElemClassFromTo('howModal', 'visibleB', 'hidden', true);
-    };
+    });
+    const plpTile = document.getElementById('plpTile');
+    plpTile.addEventListener('click', function() {
+	console.log('plpTile: got click');
+	common.replaceElemClassFromTo('plpModal', 'hidden', 'visibleB', true);
+	fillPlpModal();
+    });
+    const plpClose = document.getElementById('plpClose');
+    plpClose.addEventListener('click', function() {
+	common.replaceElemClassFromTo('plpModal', 'visibleB', 'hidden', true);
+    });
+    const withdrawDividendsButton = document.getElementById('withdrawDividendsButton');
+    withdrawDividendsButton.addEventListener('click', function() {
+	disableAllButtons();
+	common.showWaitingForMetaMask(true, false);
+	plpTokenEther.withdrawDividends(function(err, txid) {
+	    common.showWaitingForMetaMask(false, false);
+	    console.log('txid = ' + txid);
+	    common.waitForTXID(err, txid, 'Withdraw-Dividends', function() {
+		fillPlpModal();
+		handleUnlockedMetaMask();
+	    }, ether.etherscanioTxStatusHost, null);
+	});
+
+    });
 }
 
 
 function setLotteryButtonHandlers(lottery) {
     const opnCurPurchaseButton = document.getElementById(lottery + 'opnCurPurchaseButton');
     opnCurPurchaseButton.addEventListener('click', function() {
+	disableAllButtons();
 	common.showWaitingForMetaMask(true, false);
 	pirateEther.buyTicket(lottery, opnCurPurchaseButton.price, function(err, txid) {
-	    disableAllButtons();
 	    common.showWaitingForMetaMask(false, false);
 	    console.log('opnCurPurchaseButton.click: txid = ' + txid);
 	    common.waitForTXID(err, txid, 'Buy-Ticket', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
@@ -68,9 +93,9 @@ function setLotteryButtonHandlers(lottery) {
 	    const s = '0x' + signature.substring(64, 128);
 	    const v = '0x' + signature.substring(128, 130);
 	    console.log('clsPrvClaimWinButton: signature = ' + signature);
+	    disableAllButtons();
 	    common.showWaitingForMetaMask(true, true);
 	    claimFcn(lottery, v, r, s, ticket, function(err, txid) {
-		disableAllButtons();
 		common.showWaitingForMetaMask(false, false);
 		console.log('clsPrvClaimWinButton.click: txid = ' + txid);
 		common.waitForTXID(err, txid, 'Claim-Prize', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
@@ -105,16 +130,28 @@ function setLotteryButtonHandlers(lottery) {
     });
     const withdrawButton = document.getElementById('withdraw' + lottery + 'Button');
     withdrawButton.addEventListener('click', function() {
+	disableAllButtons();
 	common.showWaitingForMetaMask(true, false);
 	pirateEther.withdraw(lottery, function(err, txid) {
-	    disableAllButtons();
 	    common.showWaitingForMetaMask(false, false);
 	    console.log('txid = ' + txid);
 	    common.waitForTXID(err, txid, 'Withdraw', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
 	});
     });
+    const plpRedeemButton = document.getElementById(lottery + 'plpRedeemButton');
+    plpRedeemButton.addEventListener('click', function() {
+	disableAllButtons();
+	common.showWaitingForMetaMask(true, false);
+	pirateEther.redeemPlpPoints(lottery, function(err, txid) {
+	    common.showWaitingForMetaMask(false, false);
+	    console.log('txid = ' + txid);
+	    common.waitForTXID(err, txid, 'Redeem-PLP-Points', function() {
+		fillPlpModal();
+		handleUnlockedMetaMask();
+	    }, ether.etherscanioTxStatusHost, null);
+	});
+    });
 }
-
 
 
 function setOptionsButtonHandlers() {
@@ -236,6 +273,7 @@ function handleUnlockedMetaMask() {
 	} else {
 	    networkArea.value = 'Network: ' + network;
 	    pirateEther.setNetwork(network);
+	    plpTokenEther.setNetwork(network);
 	    if (network.startsWith('Mainnet'))
 		networkArea.className = (networkArea.className).replace('attention', '');
 	    else if (networkArea.className.indexOf(' attention' < 0))
@@ -511,6 +549,47 @@ function makeTicketListElems(tableId, playerTicketCount, tickets) {
     }
 }
 
+
+function fillPlpModal() {
+    const plpTokenReserveArea = document.getElementById('plpTokenReserveArea');
+    const plpTokensYouOwnArea = document.getElementById('plpTokensYouOwnArea');
+    const AplpPointsArea = document.getElementById('AplpPointsArea');
+    const BplpPointsArea = document.getElementById('BplpPointsArea');
+    const AplpRedeemButton = document.getElementById('AplpRedeemButton');
+    const BplpRedeemButton = document.getElementById('BplpRedeemButton');
+    const withdrawDividendsButton = document.getElementById('withdrawDividendsButton');
+    const plpTokenDividendsArea = document.getElementById('plpTokenDividendsArea');
+    AplpRedeemButton.disabled = true;
+    BplpRedeemButton.disabled = true;
+    withdrawDividendsButton.disabled = true;
+    plpTokenEther.getReserveTokens(function(err, reserveTokensBN) {
+	console.log('fillPlpModal: reserveTokensBN = ' + reserveTokensBN.toString(10));
+	plpTokenReserveArea.value = 'PLP Tokens in reserve: ' + reserveTokensBN.toNumber().toLocaleString('en');
+    });
+    plpTokenEther.getBalance(common.web3.eth.accounts[0], function(err, balanceBN) {
+	console.log('fillPlpModal: balanceBN = ' + balanceBN.toString(10));
+	plpTokensYouOwnArea.value = 'Your PLP Tokens: ' + balanceBN.toNumber().toLocaleString('en');
+    });
+    plpTokenEther.checkDividends(common.web3.eth.accounts[0], function(err, amountBN) {
+	console.log('fillPlpModal: amountBN = ' + amountBN.toString(10));
+	plpTokenDividendsArea.value = 'Your PLP dividends: ' + ether.convertWeiBNToComfort(amountBN);
+	if (!amountBN.isZero())
+	    withdrawDividendsButton.disabled = false;
+    });
+    pirateEther.getPlpPoints('A', common.web3.eth.accounts[0], function(err, pointsBN) {
+	console.log('fillPlpModal: pointsBN(A) = ' + pointsBN.toString(10));
+	AplpPointsArea.value = 'Your PLP Points from ' + index.lotteryNames[0] + ': ' + pointsBN.toNumber().toLocaleString('en');
+	if (pointsBN.gten(10))
+	    AplpRedeemButton.disabled = false;
+    });
+    pirateEther.getPlpPoints('B', common.web3.eth.accounts[0], function(err, pointsBN) {
+	console.log('fillPlpModal: pointsBN(B) = ' + pointsBN.toString(10));
+	BplpPointsArea.value = 'Your PLP Points from ' + index.lotteryNames[1] + ': ' + pointsBN.toNumber().toLocaleString('en');
+	if (pointsBN.gten(10))
+	    BplpRedeemButton.disabled = false;
+    });
+}
+
 function disableAllButtons() {
     document.getElementById('AopnCurPurchaseButton').disabled = true;
     document.getElementById('BopnCurPurchaseButton').disabled = true;
@@ -518,4 +597,7 @@ function disableAllButtons() {
     document.getElementById('withdrawBButton').disabled = true;
     document.getElementById('AclsPrvClaimWinButton').disabled = true;
     document.getElementById('BclsPrvClaimWinButton').disabled = true;
+    document.getElementById('AplpRedeemButton').disabled = true;
+    document.getElementById('BplpRedeemButton').disabled = true;
+    document.getElementById('withdrawDividendsButton').disabled = true;
 }

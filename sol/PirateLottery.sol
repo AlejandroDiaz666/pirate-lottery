@@ -29,6 +29,10 @@ pragma solidity ^0.5.0;
 //       c) what was the current round becomes the previous round
 //
 // ---------------------------------------------------------------------------
+
+import './iPlpPointsRedeemer.sol';
+
+
 contract PirateLottery {
 
   //
@@ -51,7 +55,8 @@ contract PirateLottery {
   uint constant SHORT_DURATION = 1 hours;
   //uint constant MAX_CLAIM_DURATION = 5 days;
   uint constant MAX_CLAIM_DURATION = 1 hours;
-
+  //uint constant TOKEN_HOLDOVER_THRESHOLD = 20 finney;
+  uint constant TOKEN_HOLDOVER_THRESHOLD = 100 szabo;
 
   //
   // Round structure
@@ -97,7 +102,9 @@ contract PirateLottery {
   uint256 public roundCount;
   mapping (uint256 => Round) public rounds;
   mapping (address => uint256) public balances;
-
+  mapping (address => uint256) public plpPoints;
+  iPlpPointsRedeemer plpToken;
+  uint256 public tokenHoldoverBalance;
 
   // -------------------------------------------------------------------------
   // modifiers
@@ -115,11 +122,12 @@ contract PirateLottery {
   //
   //  constructor
   //
-  constructor(uint256 _chainId, string memory _name, uint256 _min_ticket_price, uint256 _max_ticket_price) public {
+  constructor(address _plpToken, uint256 _chainId, string memory _name, uint256 _min_ticket_price, uint256 _max_ticket_price) public {
     owner = msg.sender;
     name = _name;
     min_ticket_price = _min_ticket_price;
     max_ticket_price = _max_ticket_price;
+    plpToken = iPlpPointsRedeemer(_plpToken);
     Round storage _currentRound = rounds[1];
     Round storage _previousRound = rounds[0];
     _previousRound.maxTickets = 1;
@@ -151,8 +159,10 @@ contract PirateLottery {
 					    address(this)));
     nameHash = keccak256(abi.encodePacked(name));
   }
-
-
+  //for debug only...
+  function setToken(address _plpToken) public unlockedOnly ownerOnly {
+    plpToken = iPlpPointsRedeemer(_plpToken);
+  }
   function lock() public ownerOnly {
     isLocked = true;
   }
@@ -169,6 +179,7 @@ contract PirateLottery {
       _currentRound.begDate = now;
     _currentRound.ticketCount++;
     _currentRound.prize += msg.value;
+    PlpPoints[msg.sender]++;
     uint256 _ticket = _currentRound.ticketCount;
     _currentRound.ticketOwners[_ticket] = msg.sender;
     uint256 _playerTicketCount = _currentRound.playerTicketCounts[msg.sender];
@@ -312,14 +323,22 @@ contract PirateLottery {
     emit DebugEvent0(_claimHash, _recovered);
     emit DebugEvent1(_sigV, _sigR, _sigS, _ticket);
     require(_previousRound.ticketOwners[_ticket] == _recovered, "claim is not valid");
-    uint256 _ownerCut = _ownerCutPct * _previousRound.prize / 100;
-    balances[owner] += _ownerCut;
-    uint256 _payout = _previousRound.prize - _ownerCut;
+    uint256 _tokenCut = _ownerCutPct * _previousRound.prize / 100;
+    tokenHoldoverBalance += _tokenCut;
+    uint256 _payout = _previousRound.prize - _tokenCut;
     balances[msg.sender] += _payout;
     bytes32 _winningHash = keccak256(abi.encodePacked(_currentRound.playersHash, _sigV, _sigR, _sigS));
     _currentRound.winner = uint256(_winningHash) % _currentRound.ticketCount + 1;
     emit PayoutEvent(roundCount - 1, msg.sender, _previousRound.prize, _payout);
     emit WinnerEvent(roundCount, _currentRound.winner, _currentRound.prize);
+    //
+    if (tokenHoldoverBalance > TOKEN_HOLDOVER_THRESHOLD) {
+      uint _amount = tokenHoldoverBalance;
+      tokenHoldoverBalance = 0;
+      (bool paySuccess, ) = address(plpToken).call.value(_amount)("");
+      if (!paySuccess)
+	revert();
+    }
   }
 
 
@@ -362,6 +381,17 @@ contract PirateLottery {
     //_nextRound.endDate = 0;
     //_nextRound.begDate = 0;
     _nextRound.isOpen = true;
+  }
+
+
+  //
+  // redeem caller's transfer-points for PLP Tokens
+  // make sure the reserve account has sufficient tokens before calling
+  //
+  function redeemPlpPoints() public {
+    uint256 noTokens = PlpPoints[msg.sender];
+    PlpPoints[msg.sender] = 0;
+    plpToken.transferFromReserve(msg.sender, noTokens);
   }
 
 
