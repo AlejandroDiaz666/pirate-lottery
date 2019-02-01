@@ -8,7 +8,7 @@
 BRANCH=$(git branch | grep "*" | cut -d " " -f 2)
 VER=$(git describe --tags --long)
 current=""
-if [ -e src/autoVersion.txt ]; then
+if [ -e src/js/autoVersion.txt ]; then
     current=$(cat src/js/autoVersion.txt)
 fi
 if [ "${current}" != "${BRANCH}-${VER}" ]; then
