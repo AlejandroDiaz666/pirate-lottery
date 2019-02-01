@@ -55,8 +55,8 @@ contract PirateLottery {
   uint constant SHORT_DURATION = 1 hours;
   //uint constant MAX_CLAIM_DURATION = 5 days;
   uint constant MAX_CLAIM_DURATION = 1 hours;
-  //uint constant TOKEN_HOLDOVER_THRESHOLD = 20 finney;
-  uint constant TOKEN_HOLDOVER_THRESHOLD = 100 szabo;
+  uint constant TOKEN_HOLDOVER_THRESHOLD = 20 finney;
+
 
   //
   // Round structure
@@ -179,7 +179,7 @@ contract PirateLottery {
       _currentRound.begDate = now;
     _currentRound.ticketCount++;
     _currentRound.prize += msg.value;
-    PlpPoints[msg.sender]++;
+    plpPoints[msg.sender]++;
     uint256 _ticket = _currentRound.ticketCount;
     _currentRound.ticketOwners[_ticket] = msg.sender;
     uint256 _playerTicketCount = _currentRound.playerTicketCounts[msg.sender];
@@ -389,8 +389,8 @@ contract PirateLottery {
   // make sure the reserve account has sufficient tokens before calling
   //
   function redeemPlpPoints() public {
-    uint256 noTokens = PlpPoints[msg.sender];
-    PlpPoints[msg.sender] = 0;
+    uint256 noTokens = plpPoints[msg.sender];
+    plpPoints[msg.sender] = 0;
     plpToken.transferFromReserve(msg.sender, noTokens);
   }
 
