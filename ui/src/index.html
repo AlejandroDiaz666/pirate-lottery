@@ -49,7 +49,7 @@
       <p>
 	<u>The Prize</u></br>
 	The total proceeds of all the ticket sales from each round of a lottery is awarded to the winner
-	of that round, minus a two percent fee that goes to the creator of the game. Compare this to the
+	of that round, minus a two percent fee that goes to the PLP Token holders. Compare this to the
 	40% or more that is normally taken from government-run lotteries!
       </p>
       <p>
@@ -126,10 +126,9 @@
 	A hash, called the "player-hash" is created from the addresses of all the ticket
 	purchasers. the final input to the hash is the hash of the miner who mines the Ethereum block
 	that closes the round. Thus this hash cannot be known to any ticket purchaser while the round
-	is open. The final bit of data that goes into the selection of the winner of the round is that
-	in order to claim his prize, the winner of the <i>previous</i> round needs to sign a message
-	that contains the player-hash of the current (closed) round. This signature is used to select
-	a "random" winner of the current round.
+	is open. Finally, in order to claim his prize, the winner of the <i>previous</i> round needs
+	to sign a message that contains the player-hash of the current (closed) round. This signature
+	is the final puzzle piece that goes into the selection of a "random" winner of the current round.
       </p>
       <p>
 	Note that no player purchasing tickets for a given round has sufficient data to compute the the player-hash,
