@@ -15,7 +15,7 @@ const plpTokenEther = module.exports = {
     kovan_contract_addr: [],
     main_contract_addr: [],
     contractInstance: null,
-    chainId: 0,
+    withdrawDividendsABI: null,
     CONTRACT_ADDR: [],
     CONTRACT_ABI:
     '[{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFromReserve","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"killContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_addr","type":"address"}],"name":"checkDividends","outputs":[{"name":"_ethAmount","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"reserveTokens","outputs":[{"name":"remaining","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"withdrawDividends","outputs":[{"name":"_amount","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"tokenHolders","outputs":[{"name":"tokens","type":"uint256"},{"name":"currentPoints","type":"uint256"},{"name":"lastSnapshot","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"trusted","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalReceived","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"isLocked","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"reserve","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_trustedAddr","type":"address"}],"name":"setTrust","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_spender","type":"address"}],"name":"allowance","outputs":[{"name":"remaining","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"lock","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"holdoverBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_totalSupply","type":"uint256"},{"name":"_reserveSupply","type":"uint256"},{"name":"_reserve","type":"address"},{"name":"_decimals","type":"uint8"},{"name":"_name","type":"string"},{"name":"_symbol","type":"string"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":false,"name":"amount","type":"uint256"}],"name":"PaymentEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"amount","type":"uint256"}],"name":"TransferEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"amount","type":"uint256"}],"name":"ApprovalEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"}]',
@@ -25,10 +25,8 @@ const plpTokenEther = module.exports = {
     setNetwork: function(network) {
     	if (network.indexOf('Kovan') >= 0) {
 	    plpTokenEther.CONTRACT_ADDR = plpTokenEther.kovan_contract_addr;
-	    plpTokenEther.chainId = 42;
 	} else if (network.indexOf('Ropsten') >= 0) {
 	    plpTokenEther.CONTRACT_ADDR = plpTokenEther.ropsten_contract_addr;
-	    plpTokenEther.chainId = 3;
 	} else {
 	    alert(network + ' is not a supported network');
 	}
@@ -91,15 +89,15 @@ const plpTokenEther = module.exports = {
     // cb(err, txid)
     withdrawDividends: function(cb) {
 	const abiWithdrawDividendsFcn = plpTokenEther.abiEncodeWithdrawDividends();
-        const sendData = "0x" + abiWithdrawFcn;
+        const sendData = "0x" + abiWithdrawDividendsFcn;
 	console.log('withdrawDividends: sendData = ' + sendData);
 	ether.send(plpTokenEther.CONTRACT_ADDR, 0, 'wei', sendData, 0, cb);
     },
 
     abiEncodeWithdrawDividends: function() {
-	if (!plpTokenEther.withdrawABI)
-	    plpTokenEther.withdrawABI = ethabi.methodID('withdraw', [ ]).toString('hex');
-	return(plpTokenEther.withdrawABI);
+	if (!plpTokenEther.withdrawDividendsABI)
+	    plpTokenEther.withdrawDividendsABI = ethabi.methodID('withdrawDividends', [ ]).toString('hex');
+	return(plpTokenEther.withdrawDividendsABI);
     },
 
 };
