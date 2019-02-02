@@ -37,6 +37,10 @@ function setCommonButtonHandlers() {
     youWinModalOKButton.addEventListener('click', function() {
 	common.replaceElemClassFromTo('youWinModal', 'visibleB', 'hidden', true);
     });
+    const youWillWinModalOKButton = document.getElementById('youWillWinModalOKButton');
+    youWillWinModalOKButton.addEventListener('click', function() {
+	common.replaceElemClassFromTo('youWillWinModal', 'visibleB', 'hidden', true);
+    });
     const howTile = document.getElementById('howTile');
     howTile.addEventListener('click', function() {
 	console.log('howTile: got click');
@@ -408,6 +412,20 @@ function handleOpenRound(lottery, currentInfo, previousInfo) {
     pirateEther.getTickets(lottery, common.web3.eth.accounts[0], previousInfo.round, new BN('0'), playerPrevTicketCount, function(err, lastIdx, tickets) {
 	makeTicketListElems(lottery + 'opnPrvYourTicketsList', playerPrevTicketCount, tickets);
     });
+    if (previousInfo.winner == common.web3.eth.accounts[0]) {
+	const lotteryIdx = lottery == 'A' ? 0 : 1;
+	const name = index.lotteryNames[lotteryIdx];
+	const youWillWinMsgTop = document.getElementById('youWillWinMsgTop');
+	const youWillWinMsgMop = document.getElementById('youWillWinMsgMop');
+	const youWillWinMsgBot = document.getElementById('youWillWinMsgBot');
+	youWillWinMsgTop.textContent = 'You won the ' + name + ' lottery, round ' + previousInfo.round + '!!';
+	youWillWinMsgMid.textContent = 'But you can\'t claim your prize until after round ' + currentInfo.round + ' is closed.';
+	youWillWinMsgBot.textContent = 'After round ' + currentInfo.round + ' closes you will need to claim your prize before ' +
+	    'the expiration of the claim timer!';
+	common.replaceElemClassFromTo(lottery + 'clsPrvClaimWinButton', 'hidden', 'visibleB', false);
+	common.replaceElemClassFromTo('youWillWinModal', 'hidden', 'visibleB', true);
+    }
+
     //
     common.replaceElemClassFromTo(lottery + 'opnRoundInfo',      'hidden',   'visibleB',  true);
     common.replaceElemClassFromTo(lottery + 'opnCurYourTickets', 'hidden',   'visibleB',  true);

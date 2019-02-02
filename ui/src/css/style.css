@@ -147,6 +147,8 @@ body {
     margin: 12px;
     width: 95%;
 }
+
+/* you-win modal */
 #youWinModal {
     position: fixed;
     z-index: 1;
@@ -195,6 +197,68 @@ body {
     width: 420px;
     transform: translateX(-50%);
 }
+
+
+/* you-will-win modal */
+#youWillWinModal {
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    top: 60%;
+    width: 500px;
+    height: 300px;
+    transform: translate3d(-50%, -50%, 0px);
+    padding: 0px;
+    overflow: none;
+    border: 1px solid #888;
+    background-image: url("../images/must-wait.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: 200px 300px;
+    background-color: #ffffff;
+    font-size: 18px;
+    font-family: lato;
+    text-align: center;
+}
+#youWillWinModalOKButton {
+    position: absolute;
+    top: 100%;
+    left: 350px;
+    transform: translate3d(-50%, -50px, 0px);
+    width: 60px;
+    height: 30px;
+    font-size: 18px;
+    text-align: center;
+}
+#youWillWinModalOKButton:hover {
+    cursor: pointer;
+}
+#youWillWinMsgTop {
+    position: absolute;
+    top: 10px;
+    left: 215px;
+    width: 280px;
+    font-size: 20px;
+    text-align: left;
+}
+#youWillWinMsgMid {
+    position: absolute;
+    top: 80px;
+    left: 215px;
+    width: 280px;
+    font-size: 16px;
+    text-align: left;
+}
+#youWillWinMsgBot {
+    position: absolute;
+    top: 140px;
+    left: 215px;
+    width: 280px;
+    font-size: 16px;
+    text-align: left;
+}
+
+
 #howTile {
     position: absolute;
     top: 30px;
