@@ -80,9 +80,9 @@ const ether = module.exports = {
 	    (weiBN.lt(new BN('3B9ACA00', 16)))        ? 'Wei'    :
 	    (weiBN.lt(new BN('E8D4A51000', 16)))      ? 'Gwei'   :
 	    (weiBN.lt(new BN('38D7EA4C68000', 16)))   ? 'Szabo'  :
-	    (weiBN.lt(new BN('DE0B6B3A7640000', 16))) ? 'Finney' : 'Eth';
+	    (weiBN.lt(new BN('DE0B6B3A7640000', 16))) ? 'Finney' : 'ether';
 	console.log('convertWeiBNToComfort: weiBN = ' + weiBN.toString(10) + ', units = ' + units);
-	return(common.web3.fromWei(weiBN, units).toString() + ' ' + units);
+	return(common.web3.fromWei(weiBN, units).toString() + ' ' + (units == 'ether' ? 'Eth' : units));
     },
 
 
