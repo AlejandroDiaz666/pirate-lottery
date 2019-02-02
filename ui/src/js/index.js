@@ -378,7 +378,7 @@ function handleOpenRound(lottery, currentInfo, previousInfo) {
     if (begDate == 0 || durationRem == 0) {
 	showDurationFcn(durationRem);
     } else {
-	index.openDurationTimer = setInterval(function() {
+	index.openDurationTimers[lotteryIdx] = setInterval(function() {
 	    showDurationFcn(durationRem);
 	    if (--durationRem < 0)
 		handleUnlockedMetaMask(lottery);
