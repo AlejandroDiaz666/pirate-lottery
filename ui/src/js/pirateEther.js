@@ -87,7 +87,7 @@ const pirateEther = module.exports = {
 	if (!pirateEther.contractInstances[lotteryIdx])
 	    initcontractInstance(lotteryIdx);
 	console.log('getPlpPoints(' + lottery + '): instance = ' + pirateEther.contractInstances[lotteryIdx]);
-	pirateEther.contractInstances[lotteryIdx].PlpPoints(address, (err, resultObj) => {
+	pirateEther.contractInstances[lotteryIdx].plpPoints(address, (err, resultObj) => {
 	    console.log('getPlpPoints(' + lottery + '): address = ' + address + ', err = ' + err + ', result = ' + resultObj.toString());
 	    if (!!err) {
 		cb(err, null);
