@@ -12,7 +12,7 @@ const keccak = require('keccakjs');
 
 const pirateEther = module.exports = {
 
-    ropsten_contract_addrs: [ '0x9731dD20dcb828DEd84555C08f9f09d071B497E4', '0x5dF3F3eBB39812e5fFe2a8036fDcb808c796bA0d' ],
+    ropsten_contract_addrs: [ '0x9054eb18c6b336426291D13E6aE4Cca712E74d07', '0x61C20D3812cC3B774eE74D3A59c58232b7803B0d' ],
     kovan_contract_addrs: [],
     main_contract_addrs: [],
     contractInstances: [],

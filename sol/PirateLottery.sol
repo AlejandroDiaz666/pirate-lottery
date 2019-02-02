@@ -38,8 +38,6 @@ contract PirateLottery {
   //
   // events
   //
-  event DebugEvent0(bytes32 claimHash, address recovered);
-  event DebugEvent1(uint8 V, bytes32 R, bytes32 S, uint256 ticket);
   event WinnerEvent(uint256 round, uint256 ticket, uint256 prize);
   event PayoutEvent(uint256 round, address payee, uint256 prize, uint256 payout);
 
@@ -49,12 +47,9 @@ contract PirateLottery {
   //
   uint constant MIN_TICKETS = 10;
   uint constant MAX_TICKETS = 50000000;
-  //uint constant LONG_DURATION = 5 days;
-  uint constant LONG_DURATION = 2 hours;
-  //uint constant SHORT_DURATION = 12 hours;
-  uint constant SHORT_DURATION = 1 hours;
-  //uint constant MAX_CLAIM_DURATION = 5 days;
-  uint constant MAX_CLAIM_DURATION = 1 hours;
+  uint constant LONG_DURATION = 5 days;
+  uint constant SHORT_DURATION = 12 hours;
+  uint constant MAX_CLAIM_DURATION = 5 days;
   uint constant TOKEN_HOLDOVER_THRESHOLD = 20 finney;
 
 
@@ -320,8 +315,6 @@ contract PirateLottery {
     bytes32 _claimHash = keccak256(abi.encode(CLAIM_TYPEHASH, nameHash, roundCount - 1, _ticket, _currentRound.playersHash));
     bytes32 _domainClaimHash = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, _claimHash));
     address _recovered = ecrecover(_domainClaimHash, _sigV, _sigR, _sigS);
-    emit DebugEvent0(_claimHash, _recovered);
-    emit DebugEvent1(_sigV, _sigR, _sigS, _ticket);
     require(_previousRound.ticketOwners[_ticket] == _recovered, "claim is not valid");
     uint256 _tokenCut = _ownerCutPct * _previousRound.prize / 100;
     tokenHoldoverBalance += _tokenCut;
@@ -354,11 +347,11 @@ contract PirateLottery {
     uint256 _currentDuration = _currentRound.endDate - _currentRound.begDate;
     //
     if (_currentDuration < SHORT_DURATION) {
-       if (_currentRound.ticketPrice < max_ticket_price) {
+      if (_currentRound.ticketPrice < max_ticket_price && _currentRound.maxTickets > MIN_TICKETS * 10) {
 	 _nextRound.ticketPrice = max_ticket_price;
 	 _nextRound.maxTickets = _currentRound.maxTickets;
        } else {
-	 _nextRound.ticketPrice = max_ticket_price;
+	 _nextRound.ticketPrice = _currentRound.ticketPrice;
 	 _nextRound.maxTickets = 2 * _currentRound.maxTickets;
 	 if (_nextRound.maxTickets > MAX_TICKETS)
 	   _nextRound.maxTickets = MAX_TICKETS;
