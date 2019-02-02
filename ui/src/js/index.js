@@ -85,7 +85,7 @@ function setLotteryButtonHandlers(lottery) {
 	pirateEther.buyTicket(lottery, opnCurPurchaseButton.price, function(err, txid) {
 	    common.showWaitingForMetaMask(false, false);
 	    console.log('opnCurPurchaseButton.click: txid = ' + txid);
-	    common.waitForTXID(err, txid, 'Buy-Ticket', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
+	    common.waitForTXID(err, txid, 'Buy-Ticket', () => handleUnlockedMetaMask(), ether.etherscanioTxStatusHost, null);
 	});
     });
     //
@@ -102,7 +102,7 @@ function setLotteryButtonHandlers(lottery) {
 	    claimFcn(lottery, v, r, s, ticket, function(err, txid) {
 		common.showWaitingForMetaMask(false, false);
 		console.log('clsPrvClaimWinButton.click: txid = ' + txid);
-		common.waitForTXID(err, txid, 'Claim-Prize', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
+		common.waitForTXID(err, txid, 'Claim-Prize', () => handleUnlockedMetaMask(), ether.etherscanioTxStatusHost, null);
 	    });
 	});
     };
@@ -139,7 +139,7 @@ function setLotteryButtonHandlers(lottery) {
 	pirateEther.withdraw(lottery, function(err, txid) {
 	    common.showWaitingForMetaMask(false, false);
 	    console.log('txid = ' + txid);
-	    common.waitForTXID(err, txid, 'Withdraw', handleUnlockedMetaMask, ether.etherscanioTxStatusHost, null);
+	    common.waitForTXID(err, txid, 'Withdraw', () => handleUnlockedMetaMask(), ether.etherscanioTxStatusHost, null);
 	});
     });
     const plpRedeemButton = document.getElementById(lottery + 'plpRedeemButton');
@@ -255,12 +255,13 @@ function handleLockedMetaMask(err) {
 
 //
 // handle unlocked metamask
-// displays the users's eth account info; then continues on to handleOpenRound orhandleClosedRound for each lottery
+// displays the users's eth account info; then continues on to handleOpenRound orhandleClosedRound for each lottery.
+// if passed lottery is non-null, then only re-display info for that lottery
 //
 // note: after a transaction is completed we come back to this fcn
 //
-function handleUnlockedMetaMask() {
-    console.log('handleUnlockedMetaMask');
+function handleUnlockedMetaMask(lottery) {
+    console.log('handleUnlockedMetaMask: lottery = ' + (!!lottery ? lottery : 'both'));
     index.localStoragePrefix = (common.web3.eth.accounts[0]).substring(2, 10) + '-';
     const accountArea = document.getElementById('accountArea');
     accountArea.value = 'Your account: ' + common.web3.eth.accounts[0];
@@ -283,38 +284,58 @@ function handleUnlockedMetaMask() {
 	    else if (networkArea.className.indexOf(' attention' < 0))
 		networkArea.className += ' attention';
 	}
-	pirateEther.getBalance('A', common.web3.eth.accounts[0], function(err, balanceBN) {
-	    const lotteryABalanceArea = document.getElementById('lotteryABalanceArea');
-	    const withdrawAButton = document.getElementById('withdrawAButton');
-	    const name = index.lotteryNames[0];
-	    lotteryABalanceArea.value = 'Winnings from ' + name + ': ' + ether.convertWeiBNToComfort(balanceBN);
-	    withdrawAButton.disabled = balanceBN.isZero() ? true : false;
-	});
-	pirateEther.getBalance('B', common.web3.eth.accounts[0], function(err, balanceBN) {
-	    const lotteryABalanceArea = document.getElementById('lotteryBBalanceArea');
-	    const withdrawBButton = document.getElementById('withdrawBButton');
-	    const name = index.lotteryNames[1];
-	    lotteryABalanceArea.value = 'Winnings from ' + name + ': ' + ether.convertWeiBNToComfort(balanceBN);
-	    withdrawBButton.disabled = balanceBN.isZero() ? true : false;
-	});
-	pirateEther.getCurrentInfo('A', common.web3.eth.accounts[0], function(err, currentInfo) {
-	    console.log('handleUnlockedMetaMask: getCurrentInfo err = ' + err);
-	    pirateEther.getPreviousInfo('A', common.web3.eth.accounts[0], function(err, previousInfo) {
-		console.log('handleUnlockedMetaMask: getPreviousInfo err = ' + err);
-		const handleFcn = (currentInfo.isOpen) ? handleOpenRound : handleClosedRound;
-		handleFcn('A', currentInfo, previousInfo);
+	if (!lottery || lottery == 'A') {
+	    clearDurationTimers('A');
+	    pirateEther.getBalance('A', common.web3.eth.accounts[0], function(err, balanceBN) {
+		const lotteryABalanceArea = document.getElementById('lotteryABalanceArea');
+		const withdrawAButton = document.getElementById('withdrawAButton');
+		const name = index.lotteryNames[0];
+		lotteryABalanceArea.value = 'Winnings from ' + name + ': ' + ether.convertWeiBNToComfort(balanceBN);
+		withdrawAButton.disabled = balanceBN.isZero() ? true : false;
 	    });
-	});
-	pirateEther.getCurrentInfo('B', common.web3.eth.accounts[0], function(err, currentInfo) {
-	    console.log('handleUnlockedMetaMask: getCurrentInfo err = ' + err);
-	    pirateEther.getPreviousInfo('B', common.web3.eth.accounts[0], function(err, previousInfo) {
-		console.log('handleUnlockedMetaMask: getPreviousInfo err = ' + err);
-		const handleFcn = (currentInfo.isOpen) ? handleOpenRound : handleClosedRound;
-		handleFcn('B', currentInfo, previousInfo);
+	    pirateEther.getCurrentInfo('A', common.web3.eth.accounts[0], function(err, currentInfo) {
+		console.log('handleUnlockedMetaMask: getCurrentInfo err = ' + err);
+		pirateEther.getPreviousInfo('A', common.web3.eth.accounts[0], function(err, previousInfo) {
+		    console.log('handleUnlockedMetaMask: getPreviousInfo err = ' + err);
+		    const handleFcn = (currentInfo.isOpen) ? handleOpenRound : handleClosedRound;
+		    handleFcn('A', currentInfo, previousInfo);
+		});
 	    });
-	});
+	}
+	if (!lottery || lottery == 'B') {
+	    clearDurationTimers('B');
+	    pirateEther.getBalance('B', common.web3.eth.accounts[0], function(err, balanceBN) {
+		const lotteryABalanceArea = document.getElementById('lotteryBBalanceArea');
+		const withdrawBButton = document.getElementById('withdrawBButton');
+		const name = index.lotteryNames[1];
+		lotteryABalanceArea.value = 'Winnings from ' + name + ': ' + ether.convertWeiBNToComfort(balanceBN);
+		withdrawBButton.disabled = balanceBN.isZero() ? true : false;
+	    });
+	    pirateEther.getCurrentInfo('B', common.web3.eth.accounts[0], function(err, currentInfo) {
+		console.log('handleUnlockedMetaMask: getCurrentInfo err = ' + err);
+		pirateEther.getPreviousInfo('B', common.web3.eth.accounts[0], function(err, previousInfo) {
+		    console.log('handleUnlockedMetaMask: getPreviousInfo err = ' + err);
+		    const handleFcn = (currentInfo.isOpen) ? handleOpenRound : handleClosedRound;
+		    handleFcn('B', currentInfo, previousInfo);
+		});
+	    });
+	}
     });
     common.clearStatusDiv();
+}
+
+
+function clearDurationTimers(lottery) {
+    console.log('clearDurationTimers: lottery = ' + lottery);
+    const lotteryIdx = lottery == 'A' ? 0 : 1;
+    if (!!index.openDurationTimers[lotteryIdx]) {
+	clearInterval(index.openDurationTimers[lotteryIdx]);
+	index.openDurationTimers[lotteryIdx] = null;
+    }
+    if (!!index.closedDurationTimers[lotteryIdx]) {
+	clearInterval(index.closedDurationTimers[lotteryIdx]);
+	index.closedDurationTimers[lotteryIdx] = null;
+    }
 }
 
 
@@ -322,12 +343,8 @@ function handleUnlockedMetaMask() {
 // lottery = 'A' | 'B'
 //
 function handleOpenRound(lottery, currentInfo, previousInfo) {
-    console.log('handleOpenRound');
+    console.log('handleOpenRound(' + lottery + ')');
     const lotteryIdx = lottery == 'A' ? 0 : 1;
-    if (!!index.openDurationTimers[lotteryIdx]) {
-	clearInterval(index.openDurationTimers[lotteryIdx]);
-	index.openDurationTimers[lotteryIdx] = null;
-    }
     const opnCurLotteryRoundNo = document.getElementById(lottery + 'opnCurLotteryRoundNo');
     const opnCurTicketPrice = document.getElementById(lottery + 'opnCurTicketPrice');
     const opnCurMaxTickets = document.getElementById(lottery + 'opnCurMaxTickets');
@@ -363,7 +380,8 @@ function handleOpenRound(lottery, currentInfo, previousInfo) {
     } else {
 	index.openDurationTimer = setInterval(function() {
 	    showDurationFcn(durationRem);
-	    --durationRem;
+	    if (--durationRem < 0)
+		handleUnlockedMetaMask(lottery);
 	}, 1000);
     }
     const ticketsRemain = (begDate != 0 && durationRem <= 0) ? 1 : currentInfo.maxTickets - currentInfo.ticketCount;
@@ -442,7 +460,7 @@ function handleOpenRound(lottery, currentInfo, previousInfo) {
 // lottery = 'A' | 'B'
 //
 function handleClosedRound(lottery, currentInfo, previousInfo) {
-    console.log('handleClosedRound');
+    console.log('handleClosedRound(' + lottery + ')');
     const lotteryIdx = lottery == 'A' ? 0 : 1;
     const clsCurLotteryRoundNo = document.getElementById(lottery + 'clsCurLotteryRoundNo');
     const clsCurTicketPrice = document.getElementById(lottery + 'clsCurTicketPrice');
@@ -463,10 +481,6 @@ function handleClosedRound(lottery, currentInfo, previousInfo) {
     //
     //previous round
     //
-    if (!!index.closedDurationTimers[lotteryIdx]) {
-	clearInterval(index.closedDurationTimers[lotteryIdx]);
-	index.closedDurationTimers[lotteryIdx] = null;
-    }
     const clsPrvRoundNo = document.getElementById(lottery + 'clsPrvRoundNo');
     const clsPrvWinningTicketNo = document.getElementById(lottery + 'clsPrvWinningTicketNo');
     const clsPrvPrize = document.getElementById(lottery + 'clsPrvPrize');
@@ -500,14 +514,14 @@ function handleClosedRound(lottery, currentInfo, previousInfo) {
 	common.replaceElemClassFromTo(lottery + 'clsPrvDeadlineYesExpired', 'visibleB', 'hidden', true);
 	index.closedDurationTimers[lotteryIdx] = setInterval(function() {
 	    showDurationFcn(durationRem);
-	    --durationRem;
+	    if (--durationRem < 0)
+		handleUnlockedMetaMask(lottery);
 	}, 1000);
     }
     const prevPrizeBN = common.numberToBN(previousInfo.prize);
     const prevPrizeStr = ether.convertWeiBNToComfort(prevPrizeBN);
     clsPrvPrize.textContent = common.leftPadTo(prevPrizeStr, 12, '\u00a0');
     clsPrvTickets.textContent = common.leftPadTo(previousInfo.ticketCount, 6, '\u00a0') + ' tickets';
-    //clsWinningTicket.textContent = previousInfo.winningTicket;
     const playerPrevTicketCount = parseInt(previousInfo.playerTicketCount);
     console.log('playerPrevTicketCount = ' + playerPrevTicketCount);
     pirateEther.getTickets(lottery, common.web3.eth.accounts[0], previousInfo.round, new BN('0'), playerPrevTicketCount, function(err, lastIdx, tickets) {
