@@ -26,7 +26,7 @@ clean:
 
 deploy: all
 	rm -rf release/*
-	if [ ! -d amt ]; then mkdir release; fi
+	if [ ! -d release ]; then mkdir release; fi
 	mkdir release/css
 	mkdir release/images
 	mkdir release/bundle
@@ -34,7 +34,7 @@ deploy: all
 	cp $(IMGBLDDIR)/* release/images/
 	cp $(CSSBLDDIR)/*_TIMESTAMP*.css release/css/
 	cp $(JSBLDDIR)/index_TIMESTAMP*.js release/bundle/
-	tar -czf pirateLottery-$(shell cat src/autoVersion.txt).tar.gz amt
+	tar -czf pirateLottery-$(shell cat src/js/autoVersion.txt).tar.gz release
 
 $(CSSBLDDIR)/%-style.css : $(CSSSRCDIR)/%-theme.css $(CSSSRCDIR)/style.css
 	echo "doing style"
