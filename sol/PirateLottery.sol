@@ -189,20 +189,6 @@ contract PirateLottery {
     }
   }
 
-  //
-  // close a round that is taking too long
-  //
-  function closeRound() public {
-    Round storage _currentRound = rounds[roundCount];
-    require(_currentRound.isOpen == true, "current round is already closed");
-    require(_currentRound.begDate != 0, "current round has not yet begun");
-    uint256 _currentDuration = now - _currentRound.begDate;
-    require(_currentDuration > LONG_DURATION, "too early to close round");
-    _currentRound.playersHash = keccak256(abi.encodePacked(_currentRound.playersHash, now));
-    _currentRound.isOpen = false;
-    _currentRound.endDate = now;
-  }
-
 
   //
   // get info for the current round
