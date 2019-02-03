@@ -30,7 +30,7 @@ deploy: all
 	mkdir release/css
 	mkdir release/images
 	mkdir release/bundle
-	cp $(HTMBLDDIR)/*.html release/
+	cp $(HTMBLDDIR)/*.html $(HTMBLDDIR)/play release/
 	cp $(IMGBLDDIR)/* release/images/
 	cp $(CSSBLDDIR)/*_TIMESTAMP*.css release/css/
 	cp $(JSBLDDIR)/index_TIMESTAMP*.js release/bundle/
@@ -84,3 +84,4 @@ $(HTMBLDDIR)/index.html : $(HTMSRCDIR)/index.html \
 	if [ ! -d $(HTMBLDDIR) ]; then mkdir -p $(HTMBLDDIR); fi
 	cp $< $@
 	./set_timestamp.sh
+	cp $(HTMBLDDIR)/index.html $(HTMBLDDIR)/play
