@@ -147,8 +147,8 @@ contract PirateLotteryProfitToken is iERC20Token, iDividendToken, iPlpPointsRede
     tokenHolders[owner].tokens = safeSub(totalSupply, _reserveSupply);
   }
 
-  function setTrust(address _trustedAddr) public ownerOnly unlockedOnly {
-    trusted[_trustedAddr] = true;
+  function setTrust(address _trustedAddr, bool _trust) public ownerOnly unlockedOnly {
+    trusted[_trustedAddr] = _trust;
   }
 
   function lock() public ownerOnly {
