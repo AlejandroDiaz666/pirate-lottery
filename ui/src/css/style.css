@@ -76,17 +76,32 @@ body {
     font-family: lato;
     color: antiquewhite;
 }
-@media (max-width: 1688px) {
+@media (max-width: 1688px) and (min-width: 1271px) {
     #TitleRightSpan {
 	position: absolute;
 	top: -10px;
-	left: 1015px;
-	width: 600px;
+	left: 715px;
+	width: 385px;
+	transform: translateX(0px);
 	font-size: 30px;
 	font-family: lato;
 	color: antiquewhite;
     }
 }
+
+@media (max-width: 1270px) {
+    #TitleRightSpan {
+	position: absolute;
+	top: 10px;
+	left: 715px;
+	width: 175px;
+	transform: translateX(0px);
+	font-size: 18px;
+	font-family: lato;
+	color: antiquewhite;
+    }
+}
+
 
 #topSection {
 }
@@ -413,6 +428,40 @@ body {
 }
 #xferPtsAButton[disabled]:hover, #xferPtsBButton[disabled]:hover, #withdrawDividendsButton[disabled]:hover {
     cursor: default;
+}
+
+
+@media (max-width: 1688px) {
+    #howTile {
+	position: absolute;
+	top: 30px;
+	left: 100%;
+	transform: translateX(-175px);
+	width: 160px;
+	height: 67px;
+    }
+    #howImg {
+	width: 50px;
+	height: 50px;
+	top: 1px;
+	transform: translateX(-29px);
+    }
+
+    #plpTile {
+	position: absolute;
+	top: 110px;
+	left: 100%;
+	transform: translateX(-175px);
+	width: 160px;
+	height: 67px;
+    }
+    #plpImg {
+	width: 50px;
+	height: 50px;
+	top: 1px;
+	transform: translateX(-25px);
+    }
+
 }
 
 
