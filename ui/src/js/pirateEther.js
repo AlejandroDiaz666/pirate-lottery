@@ -14,7 +14,7 @@ const pirateEther = module.exports = {
 
     ropsten_contract_addrs: [ '', '' ],
     kovan_contract_addrs: [ '0x9731dD20dcb828DEd84555C08f9f09d071B497E4', '0x5dF3F3eBB39812e5fFe2a8036fDcb808c796bA0d' ],
-    main_contract_addrs: [],
+    main_contract_addrs: [ '0x06dF142f76Ae6efb9025779F58F1e109DcE402F0', '0xaeB12b5aB62A49c14E72Fb3ad2C0e809A9b446b3' ],
     contractInstances: [],
     lotteryNames: [],
     buyTicketABI: null,
@@ -30,10 +30,9 @@ const pirateEther = module.exports = {
     	if (network.indexOf('Kovan') >= 0) {
 	    pirateEther.CONTRACT_ADDRS = pirateEther.kovan_contract_addrs;
 	    pirateEther.chainId = 42;
-	} else if (network.indexOf('Ropsten') >= 0) {
-	    alert(network + ' is not a supported network');
-	    pirateEther.CONTRACT_ADDRS = pirateEther.ropsten_contract_addrs;
-	    pirateEther.chainId = 3;
+	} else if (network.indexOf('Mainnet') >= 0) {
+	    pirateEther.CONTRACT_ADDRS = pirateEther.main_contract_addrs;
+	    pirateEther.chainId = 1;
 	} else {
 	    alert(network + ' is not a supported network');
 	}

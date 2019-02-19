@@ -13,7 +13,7 @@ const plpTokenEther = module.exports = {
 
     ropsten_contract_addr: '',
     kovan_contract_addr: '0xC5c37d2dA1659169f1a2d307cdb2EC5A03775E3e',
-    main_contract_addr: '',
+    main_contract_addr: '0x135E60231111835EBAa24710b2FbB332fd9E5DC9',
     contractInstance: null,
     withdrawDividendsABI: null,
     CONTRACT_ADDR: null,
@@ -25,9 +25,8 @@ const plpTokenEther = module.exports = {
     setNetwork: function(network) {
     	if (network.indexOf('Kovan') >= 0) {
 	    plpTokenEther.CONTRACT_ADDR = plpTokenEther.kovan_contract_addr;
-	} else if (network.indexOf('Ropsten') >= 0) {
-	    alert(network + ' is not a supported network');
-	    plpTokenEther.CONTRACT_ADDR = plpTokenEther.ropsten_contract_addr;
+	} else if (network.indexOf('Mainnet') >= 0) {
+	    plpTokenEther.CONTRACT_ADDR = plpTokenEther.main_contract_addr;
 	} else {
 	    alert(network + ' is not a supported network');
 	}
